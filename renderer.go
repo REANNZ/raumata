@@ -44,12 +44,12 @@ type LabelStyle struct {
 type RenderConfig struct {
 	MinNodeSep       float32              `json:"min-node-sep"`
 	DefaultNodeStyle NodeStyle            `json:"node-style"`
-	DefaultLinkStyle LinkStyle            `json:"link-style"`
-	LinkColorScale   *canvas.ColorScale   `json:"link-color-scale"`
 	NodeStyles       map[string]NodeStyle `json:"node-styles,omitempty"`
+	DefaultLinkStyle LinkStyle            `json:"link-style"`
 	LinkStyles       map[string]LinkStyle `json:"link-styles,omitempty"`
 	NodeLabelStyle   LabelStyle           `json:"node-label-style"`
 	LinkLabelStyle   LabelStyle           `json:"link-label-style"`
+	LinkColorScale   *canvas.ColorScale   `json:"link-color-scale"`
 }
 
 func DefaultRenderConfig() *RenderConfig {

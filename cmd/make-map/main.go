@@ -9,6 +9,8 @@ The flags are:
 
 		-c path
 	    	Read config from the JSON-formatted file at path.
+        -dumpconf
+            Dump the config as JSON to stdout and exit.
 		-h, -help
 			Print out full help
 
@@ -32,12 +34,14 @@ import (
 var (
 	configPath string = ""
 	help bool = false
+	dumpConf bool = false
 )
 
 func init() {
 	flag.StringVar(&configPath, "c", "", "path to a config file in JSON format")
 	flag.BoolVar(&help, "h", false, "")
 	flag.BoolVar(&help, "help", false, "")
+	flag.BoolVar(&dumpConf, "dumpconf", false, "")
 }
 
 func main() {
@@ -52,6 +56,34 @@ func main() {
 }
 
 func run() int {
+
+	renderConfig := raumata.DefaultRenderConfig()
+	b, err := json.Marshal(renderConfig)
+	if err == nil {
+		os.Stderr.Write(b)
+	}
+
+	if configPath != "" {
+		f, err := os.Open(configPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error opening config file %s: %s\n",
+				configPath, err)
+			return 1
+		}
+
+		decoder := json.NewDecoder(f)
+		err = decoder.Decode(renderConfig)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error parsing config: %s\n", err)
+			return 1
+		}
+	}
+
+	if dumpConf {
+		dumpConfig(renderConfig)
+		return 0
+	}
+
 	var in io.Reader = os.Stdin
 
 	if flag.NArg() > 0 {
@@ -90,23 +122,6 @@ func run() int {
 			}
 			out = f
 			tmpFile = f
-		}
-	}
-
-	renderConfig := raumata.DefaultRenderConfig()
-	if configPath != "" {
-		f, err := os.Open(configPath)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error opening config file %s: %s\n",
-				configPath, err)
-			return 1
-		}
-
-		decoder := json.NewDecoder(f)
-		err = decoder.Decode(renderConfig)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error parsing config: %s\n", err)
-			return 1
 		}
 	}
 
@@ -183,4 +198,11 @@ Otherwise, the arguments are paths to to the input and output files.
 `
 
 	io.WriteString(os.Stderr, usage)
+}
+
+func dumpConfig(conf *raumata.RenderConfig) {
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+
+	encoder.Encode(conf)
 }

@@ -12,6 +12,7 @@ It is essentially a specialized graphics package for network maps.
 * Automatic Link Routing
 * Automatic Label Placement
 * SVG Output
+* Static Map Generator, `make-map`
 
 ### Planned Features
 
@@ -21,3 +22,4 @@ the future:
 * Additional Node Shapes
 * Additional Link Styles
 * Automatic Node Placement
+* Additional Output Formats
