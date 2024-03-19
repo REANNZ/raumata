@@ -3,6 +3,7 @@ package canvas
 import (
 	"fmt"
 	"io"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -358,8 +359,33 @@ func (r *SVGRenderer) writeOpenElement(name string, attrs map[string]string, sel
 		return err
 	}
 
-	for attr, val := range attrs {
-		if _, err := fmt.Fprintf(r.f, " %s=\"%s\"", attr, val); err != nil {
+	// Sort the attributes by key to make the output consistent and
+	// more diff-friendly
+	type attrPair struct {
+		key string
+		val string
+	}
+
+	var attrPairs []attrPair
+
+	for key, val := range attrs {
+		attrPairs = append(attrPairs, attrPair{
+			key: key, val: val,
+		})
+	}
+
+	slices.SortFunc(attrPairs, func(a, b attrPair) int {
+		if a.key < b.key {
+			return -1
+		} else if a.key == b.key {
+			return 0
+		} else {
+			return 1
+		}
+	})
+
+	for _, pair := range attrPairs {
+		if _, err := fmt.Fprintf(r.f, " %s=\"%s\"", pair.key, pair.val); err != nil {
 			return err
 		}
 	}
