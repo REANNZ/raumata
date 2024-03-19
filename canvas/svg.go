@@ -30,16 +30,17 @@ const (
 // The size of the image is determined by the width and height
 // of the canvas and the Width and Height fields.
 type SVGRenderer struct {
-	Indent        int          // Controls the size of the indent
-	Width         int          // The width of the image, <= 0 means automatic
-	Height        int          // The height of the image, <= 0 means automatic
-	IncludeHeader bool         // Include an XML header, set to false if embedding the file in another document
-	StyleMode     SVGStyleMode // Mode to use for rendering styles, defaults to SVGStyleNone
-	Precision     int          // Controls the precision used for printing floats
-	f             io.Writer
-	level         int
-	currentStyle  *Style
-	canvas        *Canvas
+	Indent         int            // Controls the size of the indent
+	Width          int            // The width of the image, <= 0 means automatic
+	Height         int            // The height of the image, <= 0 means automatic
+	IncludeHeader  bool           // Include an XML header, set to false if embedding the file in another document
+	StyleMode      SVGStyleMode   // Mode to use for rendering styles, defaults to SVGStyleNone
+	Precision      int            // Controls the precision used for printing floats
+	RootAttributes map[string]any // Attributes for the root svg element
+	f              io.Writer
+	level          int
+	currentStyle   *Style
+	canvas         *Canvas
 }
 
 // NewSVGRenderer returns a new renderer that writes an SVG to f
@@ -49,8 +50,9 @@ func NewSVGRenderer(f io.Writer) *SVGRenderer {
 		level:        0,
 		currentStyle: NewStyle(),
 
-		IncludeHeader: true,
-		Precision:     3,
+		IncludeHeader:  true,
+		Precision:      3,
+		RootAttributes: make(map[string]any),
 	}
 }
 
@@ -65,9 +67,9 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 
 	r.canvas = canvas
 
-	attrs := map[string]string{
-		"xmlns": "http://www.w3.org/2000/svg",
-	}
+	attrs := r.convertAttributeMap(r.RootAttributes)
+
+	attrs["xmlns"] = "http://www.w3.org/2000/svg"
 
 	aabb := canvas.GetAABB()
 
@@ -456,16 +458,14 @@ func (r *SVGRenderer) formatFloat32(f float32) string {
 	return strconv.FormatFloat(float64(f), 'f', prec, 32)
 }
 
-// Converts attributes into a map[string]string.
-func (r *SVGRenderer) convertAttributes(attrs *Attributes) map[string]string {
+func (r *SVGRenderer) convertAttributeMap(attrs map[string]any) map[string]string {
 	out := map[string]string{}
 
 	if attrs == nil {
 		return out
 	}
 
-	// Convert the `Extra` field first, unrecognised types are ignored
-	for attr, v := range attrs.Extra {
+	for attr, v := range attrs {
 		switch val := v.(type) {
 		case nil:
 			// Do nothing
@@ -498,6 +498,14 @@ func (r *SVGRenderer) convertAttributes(attrs *Attributes) map[string]string {
 			out[attr] = val.String()
 		}
 	}
+
+	return out
+}
+
+// Converts attributes into a map[string]string.
+func (r *SVGRenderer) convertAttributes(attrs *Attributes) map[string]string {
+	// Convert the `Extra` field first
+	out := r.convertAttributeMap(attrs.Extra)
 
 	if attrs.Id != "" {
 		out["id"] = attrs.Id
