@@ -585,6 +585,8 @@ func (s *ColorScale) UnmarshalJSON(data []byte) error {
 
 		s.points = newPoints
 
+		s.sort()
+
 		return nil
 	} else if data[0] == '{' {
 		var object struct {
@@ -604,6 +606,8 @@ func (s *ColorScale) UnmarshalJSON(data []byte) error {
 
 		s.Space = object.Space
 		s.points = newPoints
+
+		s.sort()
 
 		return nil
 	} else {
