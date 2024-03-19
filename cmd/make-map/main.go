@@ -186,6 +186,8 @@ The flags are:
 
     -c path
           Read config from the JSON-formatted file at path.
+    -dumpconf
+          Dump the config as JSON to stdout and exit.
     -h, -help
         Print out full help
 
