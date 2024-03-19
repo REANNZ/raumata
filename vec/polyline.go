@@ -103,7 +103,7 @@ func (pl Polyline) Simplify() Polyline {
 	// add the first point
 	newLine = append(newLine, pl[0])
 
-	for i := 1; i < len(pl) - 1; i++ {
+	for i := 1; i < len(pl)-1; i++ {
 		prevPoint := pl[i-1]
 		curPoint := pl[i]
 		nextPoint := pl[i+1]
@@ -181,8 +181,8 @@ func (pl Polyline) Interpolate(t float32) Vec2 {
 // the lines are guaranteed to have at least one point each and
 // have the following property:
 //
-//    line1, line2 := line.SplitAt(t)
-//    line1[len(line1)-1] == line2[0]
+//	line1, line2 := line.SplitAt(t)
+//	line1[len(line1)-1] == line2[0]
 //
 // The order of points in the split lines is the same as the order
 // in the original line

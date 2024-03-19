@@ -61,8 +61,8 @@ func UnmarshalColorStruct(data []byte, val any) error {
 }
 
 var (
-	colorType       reflect.Type = reflect.TypeFor[Color]()
-	colorValueType  reflect.Type = reflect.TypeFor[colorValue]()
+	colorType      reflect.Type = reflect.TypeFor[Color]()
+	colorValueType reflect.Type = reflect.TypeFor[colorValue]()
 )
 
 var typeCache sync.Map // map[reflect.Type]reflect.Type
@@ -153,7 +153,9 @@ func (c *typeConverter) convert(t reflect.Type) reflect.Type {
 
 func (c *typeConverter) seenType(ty reflect.Type) bool {
 	for _, t := range c.typeStack {
-		if t == ty { return true }
+		if t == ty {
+			return true
+		}
 	}
 
 	return false

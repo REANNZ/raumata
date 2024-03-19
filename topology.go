@@ -41,7 +41,7 @@ type LinkData struct {
 	// The "value" of the link, typically link usage as a %
 	Value option.Float32 `json:"value"`
 	// The label for the link, typically the amount of traffic
-	Label string         `json:"label"`
+	Label string `json:"label"`
 }
 
 // A full map topology

@@ -12,13 +12,13 @@ type direction int
 
 const (
 	directionNone direction = iota
-	directionN 
+	directionN
 	directionNE
-	directionE 
+	directionE
 	directionSE
-	directionS 
+	directionS
 	directionSW
-	directionW 
+	directionW
 	directionNW
 )
 
@@ -73,21 +73,21 @@ func (d direction) Opposite() direction {
 func (d direction) AsVec() vec.Vec2 {
 	switch d {
 	case directionN:
-		return vec.Vec2{X:  0, Y: -1 }
+		return vec.Vec2{X: 0, Y: -1}
 	case directionNE:
-		return vec.Vec2{X:  1, Y: -1 }
+		return vec.Vec2{X: 1, Y: -1}
 	case directionE:
-		return vec.Vec2{X:  1, Y:  0 }
+		return vec.Vec2{X: 1, Y: 0}
 	case directionSE:
-		return vec.Vec2{X:  1, Y:  1 }
+		return vec.Vec2{X: 1, Y: 1}
 	case directionS:
-		return vec.Vec2{X:  0, Y:  1 }
+		return vec.Vec2{X: 0, Y: 1}
 	case directionSW:
-		return vec.Vec2{X: -1, Y:  1 }
+		return vec.Vec2{X: -1, Y: 1}
 	case directionW:
-		return vec.Vec2{X: -1, Y:  0 }
+		return vec.Vec2{X: -1, Y: 0}
 	case directionNW:
-		return vec.Vec2{X: -1, Y: -1 }
+		return vec.Vec2{X: -1, Y: -1}
 	default:
 		return vec.Vec2{}
 	}

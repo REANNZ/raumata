@@ -24,23 +24,23 @@ const (
 // The zero value is not usable.
 type LinkRouter struct {
 	// Avoid other nodes when routing (default true)
-	AvoidNodes bool
-	topo       *Topology
-	nodes      internal.Grid[NodeId]
-	nodeLabels internal.Grid[bool]
-	linkMap    internal.Grid[[]LinkId]
-	extentMin  internal.GridPos
-	extentMax  internal.GridPos
+	AvoidNodes        bool
+	topo              *Topology
+	nodes             internal.Grid[NodeId]
+	nodeLabels        internal.Grid[bool]
+	linkMap           internal.Grid[[]LinkId]
+	extentMin         internal.GridPos
+	extentMax         internal.GridPos
 	linkPenaltyWeight float32
 }
 
 func NewLinkRouter(topo *Topology) *LinkRouter {
 	router := &LinkRouter{
-		AvoidNodes: true,
-		topo:       topo,
-		nodes:      internal.Grid[NodeId]{},
-		nodeLabels: map[internal.GridPos]bool{},
-		linkMap:    map[internal.GridPos][]LinkId{},
+		AvoidNodes:        true,
+		topo:              topo,
+		nodes:             internal.Grid[NodeId]{},
+		nodeLabels:        map[internal.GridPos]bool{},
+		linkMap:           map[internal.GridPos][]LinkId{},
 		linkPenaltyWeight: linkPenaltyWeight,
 	}
 
@@ -175,13 +175,12 @@ func (r *LinkRouter) RouteLinks() {
 	routes := []*route{}
 	links := r.topo.Links
 
-
 	// Routing the links happens in three passes.
 	//
 	// First, all the links are routed independently, that
 	// is, each path is routed without // considering other
 	// paths (and thus without considering crossings).
-	// 
+	//
 	// Then each route is recorded and links re-routed with
 	// knowledge of the other routes. The recorded route is
 	// moved as it is re-routed to avoid extra collisions due
@@ -224,7 +223,6 @@ func (r *LinkRouter) RouteLinks() {
 			return 0
 		}
 	})
-
 
 	newRoutes := []*route{}
 	for _, initRoute := range routes {
@@ -270,7 +268,7 @@ func (r *LinkRouter) RouteLinks() {
 						newRoutes[i] = route
 						updated = true
 					}
-				} 
+				}
 			}
 		}
 
@@ -718,7 +716,9 @@ func (f *routeFinder) weight(fromNode, toNode gridNode) float32 {
 			// Get all the links that are in both of the two relevant positions
 			linksIntersection := []LinkId{}
 			for _, l1 := range links1 {
-				if l1 == f.linkId { continue }
+				if l1 == f.linkId {
+					continue
+				}
 				for _, l2 := range links2 {
 					if l1 == l2 {
 						linksIntersection = append(linksIntersection, l1)

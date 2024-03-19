@@ -31,14 +31,14 @@ func NewPath() *Path {
 //
 // The content of Args depends the command:
 //
-// * `ClosePath`: No args
-// * `MoveTo`: [pos.X, pos.Y], the position to move to
-// * `LineTo`: [pos.X, pos.Y], the position to draw a line to
-// * `ArcTo`:  [start.X, start.Y, end.X, end.Y, radius, sweepDir]
-//             start is where the arc starts, end is where the arc ends
-//             radius is the radius of the circle that the arc is of,
-//             sweepDir is the direction the arc is drawn in, 1 for clockwise,
-//             0 for counterclockwise
+//   - `ClosePath`: No args
+//   - `MoveTo`: [pos.X, pos.Y], the position to move to
+//   - `LineTo`: [pos.X, pos.Y], the position to draw a line to
+//   - `ArcTo`:  [start.X, start.Y, end.X, end.Y, radius, sweepDir]
+//     start is where the arc starts, end is where the arc ends
+//     radius is the radius of the circle that the arc is of,
+//     sweepDir is the direction the arc is drawn in, 1 for clockwise,
+//     0 for counterclockwise
 type Command struct {
 	Type CommandType
 	Pos  vec.Vec2

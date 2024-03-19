@@ -50,7 +50,7 @@ func NewScale(v Vec2) *Transform {
 }
 
 // Returns a new transformation that represents rotating
-// a point around the origin counterclockwise by the given 
+// a point around the origin counterclockwise by the given
 // angle
 //
 //	Tx = x.Rotate(θ)
@@ -62,10 +62,10 @@ func NewRotate(angle float32) *Transform {
 
 // Apply applies the transform to v
 func (t *Transform) Apply(v Vec2) Vec2 {
-	x := t.E + v.X * t.A + v.Y * t.C
-	y := t.F + v.X * t.B + v.Y * t.D
+	x := t.E + v.X*t.A + v.Y*t.C
+	y := t.F + v.X*t.B + v.Y*t.D
 
-	return Vec2{ X: x, Y: y }
+	return Vec2{X: x, Y: y}
 }
 
 // Combine the two transforms.
@@ -76,12 +76,12 @@ func (t *Transform) Apply(v Vec2) Vec2 {
 //	T = T2*T1
 func (t1 *Transform) Combine(t2 *Transform) *Transform {
 	// Post-multiply t1 and t2 (t2*t1)
-	a := t2.A * t1.A + t2.C * t1.B
-	b := t2.B * t1.A + t2.D * t1.B
-	c := t2.A * t1.C + t2.C * t1.D
-	d := t2.B * t1.C + t2.D * t1.D
-	e := t2.A * t1.E + t2.C * t1.F + t2.E
-	f := t2.B * t1.E + t2.D * t1.F + t2.F
+	a := t2.A*t1.A + t2.C*t1.B
+	b := t2.B*t1.A + t2.D*t1.B
+	c := t2.A*t1.C + t2.C*t1.D
+	d := t2.B*t1.C + t2.D*t1.D
+	e := t2.A*t1.E + t2.C*t1.F + t2.E
+	f := t2.B*t1.E + t2.D*t1.F + t2.F
 
 	return NewTransform(a, b, c, d, e, f)
 }
@@ -100,7 +100,7 @@ func (t *Transform) IsIdentity() bool {
 // If ok is false, this transform is not a pure translation
 func (t *Transform) GetTranslation() (v Vec2, ok bool) {
 	if t.A == 1 && t.B == 0 && t.C == 0 && t.D == 1 {
-		return Vec2{ X: t.E, Y: t.F }, true
+		return Vec2{X: t.E, Y: t.F}, true
 	}
 	return Vec2{}, false
 }

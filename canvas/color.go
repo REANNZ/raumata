@@ -114,7 +114,7 @@ func RGB(r, g, b float32) *RGBColor {
 // Constructs an RGBColor from 3 integer component
 // values. This is equivalent to calling [RGB] as:
 //
-//     RGB(r/255, g/255, b/255)
+//	RGB(r/255, g/255, b/255)
 func RGBInt(r, g, b int) *RGBColor {
 	rf := float32(r) / 255
 	gf := float32(g) / 255
@@ -590,7 +590,7 @@ func (s *ColorScale) UnmarshalJSON(data []byte) error {
 		return nil
 	} else if data[0] == '{' {
 		var object struct {
-			Space ColorSpace `json:"space"`
+			Space  ColorSpace           `json:"space"`
 			Colors [][2]json.RawMessage `json:"colors"`
 		}
 
@@ -634,7 +634,7 @@ func (s *ColorScale) MarshalJSON() ([]byte, error) {
 	}
 
 	var object struct {
-		Space ColorSpace `json:"space"`
+		Space  ColorSpace           `json:"space"`
 		Colors [][2]json.RawMessage `json:"colors"`
 	}
 	object.Space = s.Space

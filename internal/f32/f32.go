@@ -64,7 +64,7 @@ func IsNaN(f float32) bool {
 
 // Returns the maximum value of the arguments
 // If any argument is NaN, Max returns NaN
-func Max(args... float32) float32 {
+func Max(args ...float32) float32 {
 	if len(args) == 0 {
 		return NaN()
 	}
@@ -85,7 +85,7 @@ func Max(args... float32) float32 {
 
 // Returns the minimum value of the arguments
 // If any argument is NaN, Min returns NaN
-func Min(args... float32) float32 {
+func Min(args ...float32) float32 {
 	if len(args) == 0 {
 		return NaN()
 	}

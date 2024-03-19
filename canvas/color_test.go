@@ -109,18 +109,18 @@ func TestColorEqual(t *testing.T) {
 // Test the reflection-based unmarshalling code
 
 func TestColorUnmarshal(t *testing.T) {
-	type testObj struct{
-		C Color
-		Cp *Color
-		Cpp **Color
-		Str string
-		Nested struct{
+	type testObj struct {
+		C      Color
+		Cp     *Color
+		Cpp    **Color
+		Str    string
+		Nested struct {
 			NC Color
 		}
-		NestedP *struct{
+		NestedP *struct {
 			NC Color
 		}
-		Colors []Color
+		Colors   []Color
 		ColorMap map[string]Color
 	}
 
@@ -225,7 +225,7 @@ func TestColorUnmarshal(t *testing.T) {
 	checkField("ColorMap[\"blue\"]", obj.ColorMap["blue"].ToRGB().ToHex(), "#0000ff")
 }
 
-type testColorUnmarshalEmbedTop struct{
+type testColorUnmarshalEmbedTop struct {
 	A string
 	B Color
 	TestColorUnmarshalEmbedA
@@ -239,7 +239,6 @@ type testColorUnmarshalEmbedB struct {
 	E string
 	F string
 }
-
 
 func (t *testColorUnmarshalEmbedTop) UnmarshalJSON(data []byte) error {
 	return UnmarshalColorStruct(data, t)
@@ -276,11 +275,12 @@ func TestColorUnmarshalEmbed(t *testing.T) {
 	}
 }
 
-type testColorUnmarshalRec struct{
+type testColorUnmarshalRec struct {
 	A string
 	B Color
 	R *testColorUnmarshalRec
 }
+
 func (t *testColorUnmarshalRec) UnmarshalJSON(data []byte) error {
 	return UnmarshalColorStruct(data, t)
 }

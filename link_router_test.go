@@ -11,33 +11,33 @@ func TestLinkRouter1(t *testing.T) {
 	topo := Topology{
 		Nodes: map[NodeId]*Node{
 			"A": {
-				Id:  "A",
-				Pos: &[2]int16{0, 0},
-				Label: "A",
+				Id:      "A",
+				Pos:     &[2]int16{0, 0},
+				Label:   "A",
 				LabelAt: "n",
 			},
 			"B": {
-				Id:  "B",
-				Pos: &[2]int16{0, 5},
-				Label: "B",
+				Id:      "B",
+				Pos:     &[2]int16{0, 5},
+				Label:   "B",
 				LabelAt: "w",
 			},
 			"C": {
-				Id:  "C",
-				Pos: &[2]int16{0, 10},
-				Label: "C",
+				Id:      "C",
+				Pos:     &[2]int16{0, 10},
+				Label:   "C",
 				LabelAt: "s",
 			},
 			"D": {
-				Id:  "D",
-				Pos: &[2]int16{8, 5},
-				Label: "D",
+				Id:      "D",
+				Pos:     &[2]int16{8, 5},
+				Label:   "D",
 				LabelAt: "s",
 			},
 			"E": {
-				Id:  "E",
-				Pos: &[2]int16{10, 10},
-				Label: "E",
+				Id:      "E",
+				Pos:     &[2]int16{10, 10},
+				Label:   "E",
 				LabelAt: "e",
 			},
 		},
@@ -91,8 +91,8 @@ func TestLinkRouter1(t *testing.T) {
 		from := topo.Nodes[link.From]
 		to := topo.Nodes[link.To]
 
-		fromPos := vec.Vec2{ X: float32(from.Pos[0]), Y: float32(from.Pos[1]) }
-		toPos := vec.Vec2{ X: float32(to.Pos[0]), Y: float32(to.Pos[1]) }
+		fromPos := vec.Vec2{X: float32(from.Pos[0]), Y: float32(from.Pos[1])}
+		toPos := vec.Vec2{X: float32(to.Pos[0]), Y: float32(to.Pos[1])}
 
 		if link.Route[0] != fromPos {
 			t.Errorf("Route for link %s does not start at 'from' node (%s != %s)",

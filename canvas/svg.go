@@ -30,12 +30,12 @@ const (
 // The size of the image is determined by the width and height
 // of the canvas and the Width and Height fields.
 type SVGRenderer struct {
-	Indent        int // Controls the size of the indent
-	Width         int // The width of the image, <= 0 means automatic
-	Height        int // The height of the image, <= 0 means automatic
-	IncludeHeader bool // Include an XML header, set to false if embedding the file in another document
+	Indent        int          // Controls the size of the indent
+	Width         int          // The width of the image, <= 0 means automatic
+	Height        int          // The height of the image, <= 0 means automatic
+	IncludeHeader bool         // Include an XML header, set to false if embedding the file in another document
 	StyleMode     SVGStyleMode // Mode to use for rendering styles, defaults to SVGStyleNone
-	Precision     int // Controls the precision used for printing floats
+	Precision     int          // Controls the precision used for printing floats
 	f             io.Writer
 	level         int
 	currentStyle  *Style
@@ -50,7 +50,7 @@ func NewSVGRenderer(f io.Writer) *SVGRenderer {
 		currentStyle: NewStyle(),
 
 		IncludeHeader: true,
-		Precision: 3,
+		Precision:     3,
 	}
 }
 
@@ -96,7 +96,7 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 		height = int(f32.Round(h))
 	}
 
-	if r.Width > 0 && r.Height > 0{
+	if r.Width > 0 && r.Height > 0 {
 		width = r.Width
 		height = r.Height
 	}

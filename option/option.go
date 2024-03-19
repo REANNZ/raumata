@@ -71,7 +71,7 @@ func (f *Float32) UnmarshalJSON(text []byte) error {
 
 	var n float32
 	err := json.Unmarshal(text, &n)
-	if err  != nil {
+	if err != nil {
 		return err
 	}
 

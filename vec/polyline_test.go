@@ -19,40 +19,40 @@ func TestPolylineLength(t *testing.T) {
 	}
 
 	checkLen(nil, 0)
-	checkLen([]vec.Vec2{{0,0}}, 0)
+	checkLen([]vec.Vec2{{0, 0}}, 0)
 
 	checkLen([]vec.Vec2{
-		{ 0, 0 },
-		{ 0, 0 },
+		{0, 0},
+		{0, 0},
 	}, 0)
 
 	checkLen([]vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
+		{0, 0},
+		{1, 0},
 	}, 1)
 	checkLen([]vec.Vec2{
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 1, 0 },
+		{0, 0},
+		{0, 0},
+		{1, 0},
+		{1, 0},
 	}, 1)
 
 	checkLen([]vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 2, 0 },
+		{0, 0},
+		{1, 0},
+		{2, 0},
 	}, 2)
 
 	checkLen([]vec.Vec2{
-		{ 0, 0 },
-		{ 1, 1 },
+		{0, 0},
+		{1, 1},
 	}, math.Sqrt2)
 
 	checkLen([]vec.Vec2{
-		{ 0, 0 },
-		{ 1, 1 },
-		{ 0, 2 },
-	}, 2 * math.Sqrt2)
+		{0, 0},
+		{1, 1},
+		{0, 2},
+	}, 2*math.Sqrt2)
 }
 
 func TestPolylineFix(t *testing.T) {
@@ -70,14 +70,14 @@ func TestPolylineFix(t *testing.T) {
 	}
 
 	var line vec.Polyline = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 1 },
+		{0, 0},
+		{1, 1},
 	}
 
 	var line2 vec.Polyline = []vec.Vec2{
-		{ 0, 0 },
-		{ 0, 0 },
-		{ 1, 1 },
+		{0, 0},
+		{0, 0},
+		{1, 1},
 	}
 
 	check(line.Fix(), line)
@@ -99,64 +99,64 @@ func TestPolylineSimplify(t *testing.T) {
 	}
 
 	var line vec.Polyline = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 1 },
+		{0, 0},
+		{1, 1},
 	}
 	check(line.Simplify(), line)
 
 	line = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 2, 0 },
-		{ 3, 0 },
+		{0, 0},
+		{1, 0},
+		{2, 0},
+		{3, 0},
 	}
 
 	check(line.Simplify(), []vec.Vec2{
-		{ 0, 0 },
-		{ 3, 0 },
+		{0, 0},
+		{3, 0},
 	})
 
 	line = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 2, 1 },
-		{ 3, 2 },
+		{0, 0},
+		{1, 0},
+		{2, 1},
+		{3, 2},
 	}
 
 	check(line.Simplify(), []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 3, 2 },
+		{0, 0},
+		{1, 0},
+		{3, 2},
 	})
 
 	line = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 2, 1 },
-		{ 1, 2 },
+		{0, 0},
+		{1, 0},
+		{2, 1},
+		{1, 2},
 	}
 
 	check(line.Simplify(), []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 2, 1 },
-		{ 1, 2 },
+		{0, 0},
+		{1, 0},
+		{2, 1},
+		{1, 2},
 	})
 
 	line = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 2, 0 },
-		{ 2, 1 },
-		{ 2, 2 },
-		{ 2, 3 },
+		{0, 0},
+		{1, 0},
+		{2, 0},
+		{2, 1},
+		{2, 2},
+		{2, 3},
 	}
 
 	simpLine := line.Simplify()
 	check(simpLine, []vec.Vec2{
-		{ 0, 0 },
-		{ 2, 0 },
-		{ 2, 3 },
+		{0, 0},
+		{2, 0},
+		{2, 3},
 	})
 
 	p1 := line.Interpolate(0.5)
@@ -168,97 +168,97 @@ func TestPolylineSimplify(t *testing.T) {
 }
 
 func TestPolylineInterpolate(t *testing.T) {
-	var line vec.Polyline = []vec.Vec2{ {0, 0}, {1, 1} }
+	var line vec.Polyline = []vec.Vec2{{0, 0}, {1, 1}}
 
-	checkVec(t, line.Interpolate(-1), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(0), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(1), vec.Vec2{ 1, 1 })
-	checkVec(t, line.Interpolate(2), vec.Vec2{ 1, 1 })
-	checkVec(t, line.Interpolate(0.5), vec.Vec2{ 0.5, 0.5 })
-	checkVec(t, line.Interpolate(0.1), vec.Vec2{ 0.1, 0.1 })
-
-	line = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 1, 1 },
-	}
-	checkVec(t, line.Interpolate(-1), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(0), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(1), vec.Vec2{ 1, 1 })
-	checkVec(t, line.Interpolate(2), vec.Vec2{ 1, 1 })
-	checkVec(t, line.Interpolate(0.5), vec.Vec2{ 1, 0 })
-	checkVec(t, line.Interpolate(0.25), vec.Vec2{ 0.5, 0 })
-	checkVec(t, line.Interpolate(0.75), vec.Vec2{ 1, 0.5 })
+	checkVec(t, line.Interpolate(-1), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(0), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(1), vec.Vec2{1, 1})
+	checkVec(t, line.Interpolate(2), vec.Vec2{1, 1})
+	checkVec(t, line.Interpolate(0.5), vec.Vec2{0.5, 0.5})
+	checkVec(t, line.Interpolate(0.1), vec.Vec2{0.1, 0.1})
 
 	line = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 1, 0 },
-		{ 1, 1 },
+		{0, 0},
+		{1, 0},
+		{1, 1},
 	}
-	checkVec(t, line.Interpolate(-1), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(0), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(1), vec.Vec2{ 1, 1 })
-	checkVec(t, line.Interpolate(2), vec.Vec2{ 1, 1 })
-	checkVec(t, line.Interpolate(0.5), vec.Vec2{ 1, 0 })
-	checkVec(t, line.Interpolate(0.25), vec.Vec2{ 0.5, 0 })
-	checkVec(t, line.Interpolate(0.75), vec.Vec2{ 1, 0.5 })
+	checkVec(t, line.Interpolate(-1), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(0), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(1), vec.Vec2{1, 1})
+	checkVec(t, line.Interpolate(2), vec.Vec2{1, 1})
+	checkVec(t, line.Interpolate(0.5), vec.Vec2{1, 0})
+	checkVec(t, line.Interpolate(0.25), vec.Vec2{0.5, 0})
+	checkVec(t, line.Interpolate(0.75), vec.Vec2{1, 0.5})
 
 	line = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 2, 0 },
-		{ 3, 0 },
+		{0, 0},
+		{1, 0},
+		{1, 0},
+		{1, 1},
 	}
-	checkVec(t, line.Interpolate(-1), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(0), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(1), vec.Vec2{ 3, 0 })
-	checkVec(t, line.Interpolate(2), vec.Vec2{ 3, 0 })
-	checkVec(t, line.Interpolate(0.5), vec.Vec2{ 1.5, 0 })
-	checkVec(t, line.Interpolate(0.25), vec.Vec2{ 0.75, 0 })
-	checkVec(t, line.Interpolate(0.75), vec.Vec2{ 2.25, 0 })
+	checkVec(t, line.Interpolate(-1), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(0), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(1), vec.Vec2{1, 1})
+	checkVec(t, line.Interpolate(2), vec.Vec2{1, 1})
+	checkVec(t, line.Interpolate(0.5), vec.Vec2{1, 0})
+	checkVec(t, line.Interpolate(0.25), vec.Vec2{0.5, 0})
+	checkVec(t, line.Interpolate(0.75), vec.Vec2{1, 0.5})
 
 	line = []vec.Vec2{
-		{ 0, 0 },
-		{ 2, 0 },
-		{ 3, 0 },
-		{ 4, 0 },
+		{0, 0},
+		{1, 0},
+		{2, 0},
+		{3, 0},
 	}
-	checkVec(t, line.Interpolate(-1), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(0), vec.Vec2{ 0, 0 })
-	checkVec(t, line.Interpolate(1), vec.Vec2{ 4, 0 })
-	checkVec(t, line.Interpolate(2), vec.Vec2{ 4, 0 })
-	checkVec(t, line.Interpolate(0.5), vec.Vec2{ 2.0, 0 })
-	checkVec(t, line.Interpolate(0.25), vec.Vec2{ 1.0, 0 })
-	checkVec(t, line.Interpolate(0.75), vec.Vec2{ 3.0, 0 })
+	checkVec(t, line.Interpolate(-1), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(0), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(1), vec.Vec2{3, 0})
+	checkVec(t, line.Interpolate(2), vec.Vec2{3, 0})
+	checkVec(t, line.Interpolate(0.5), vec.Vec2{1.5, 0})
+	checkVec(t, line.Interpolate(0.25), vec.Vec2{0.75, 0})
+	checkVec(t, line.Interpolate(0.75), vec.Vec2{2.25, 0})
+
+	line = []vec.Vec2{
+		{0, 0},
+		{2, 0},
+		{3, 0},
+		{4, 0},
+	}
+	checkVec(t, line.Interpolate(-1), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(0), vec.Vec2{0, 0})
+	checkVec(t, line.Interpolate(1), vec.Vec2{4, 0})
+	checkVec(t, line.Interpolate(2), vec.Vec2{4, 0})
+	checkVec(t, line.Interpolate(0.5), vec.Vec2{2.0, 0})
+	checkVec(t, line.Interpolate(0.25), vec.Vec2{1.0, 0})
+	checkVec(t, line.Interpolate(0.75), vec.Vec2{3.0, 0})
 }
 
 func TestPolylineSplitAt(t *testing.T) {
-	var line vec.Polyline = []vec.Vec2{ {0, 0}, {1, 1} }
+	var line vec.Polyline = []vec.Vec2{{0, 0}, {1, 1}}
 
 	l1, l2 := line.SplitAt(0.5)
-	
-	checkVec(t, l1[0], vec.Vec2{ 0, 0 })
-	checkVec(t, l1[1], vec.Vec2{ 0.5, 0.5 })
-	checkVec(t, l2[0], vec.Vec2{ 0.5, 0.5 })
-	checkVec(t, l2[1], vec.Vec2{ 1, 1 })
 
-	line = []vec.Vec2{ {0, 0}, {0, 1}, {1, 1} }
+	checkVec(t, l1[0], vec.Vec2{0, 0})
+	checkVec(t, l1[1], vec.Vec2{0.5, 0.5})
+	checkVec(t, l2[0], vec.Vec2{0.5, 0.5})
+	checkVec(t, l2[1], vec.Vec2{1, 1})
+
+	line = []vec.Vec2{{0, 0}, {0, 1}, {1, 1}}
 	l1, l2 = line.SplitAt(0.5)
-	checkVec(t, l1[0], vec.Vec2{ 0, 0 })
-	checkVec(t, l1[1], vec.Vec2{ 0, 1 })
-	checkVec(t, l2[0], vec.Vec2{ 0, 1 })
-	checkVec(t, l2[1], vec.Vec2{ 1, 1 })
+	checkVec(t, l1[0], vec.Vec2{0, 0})
+	checkVec(t, l1[1], vec.Vec2{0, 1})
+	checkVec(t, l2[0], vec.Vec2{0, 1})
+	checkVec(t, l2[1], vec.Vec2{1, 1})
 
-	line = []vec.Vec2{ {0, 0}, {0, 1}, {3, 1} }
+	line = []vec.Vec2{{0, 0}, {0, 1}, {3, 1}}
 
 	l1, l2 = line.SplitAt(0.5)
-	
-	checkVec(t, l1[0], vec.Vec2{ 0, 0 })
-	checkVec(t, l1[1], vec.Vec2{ 0, 1 })
-	checkVec(t, l1[2], vec.Vec2{ 1, 1 })
-	checkVec(t, l2[0], vec.Vec2{ 1, 1 })
-	checkVec(t, l2[1], vec.Vec2{ 3, 1 })
+
+	checkVec(t, l1[0], vec.Vec2{0, 0})
+	checkVec(t, l1[1], vec.Vec2{0, 1})
+	checkVec(t, l1[2], vec.Vec2{1, 1})
+	checkVec(t, l2[0], vec.Vec2{1, 1})
+	checkVec(t, l2[1], vec.Vec2{3, 1})
 }
 
 func TestPolylineSubdivide(t *testing.T) {
@@ -285,24 +285,24 @@ func TestPolylineSubdivide(t *testing.T) {
 		}
 	}
 
-	var line vec.Polyline = []vec.Vec2{ {0, 0}, {1, 0} }
+	var line vec.Polyline = []vec.Vec2{{0, 0}, {1, 0}}
 
 	checkSubdivide(line, 8, false)
 
-	line = []vec.Vec2{ {0, 0}, {1, 0}, {2, 0}, {4, 2} }
+	line = []vec.Vec2{{0, 0}, {1, 0}, {2, 0}, {4, 2}}
 	checkSubdivide(line, 8, false)
 	checkSubdivide(line, 6, true)
 }
 
 func BenchmarkPolylineLength(b *testing.B) {
 	var line vec.Polyline = []vec.Vec2{
-		{ 0, 0 },
-		{ 0.5, 0 },
-		{ 1, 0 },
-		{ 1, 0.5 },
-		{ 1, 1 },
-		{ 0.5, 1 },
-		{ 0, 1 },
+		{0, 0},
+		{0.5, 0},
+		{1, 0},
+		{1, 0.5},
+		{1, 1},
+		{0.5, 1},
+		{0, 1},
 	}
 
 	for i := 0; i < b.N; i++ {
@@ -312,10 +312,10 @@ func BenchmarkPolylineLength(b *testing.B) {
 
 func BenchmarkPolylineInterpolate(b *testing.B) {
 	var line vec.Polyline = []vec.Vec2{
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 1, 1 },
-		{ 0, 1 },
+		{0, 0},
+		{1, 0},
+		{1, 1},
+		{0, 1},
 	}
 
 	for i := 0; i < b.N; i++ {

@@ -8,11 +8,11 @@ Usage:
 The flags are:
 
 		-c path
-	    	Read config from the JSON-formatted file at path.
-        -dumpconf
-            Dump the config as JSON to stdout and exit.
+		    Read config from the JSON-formatted file at path.
+	    -dumpconf
+		    Dump the config as JSON to stdout and exit.
 		-h, -help
-			Print out full help
+		    Print out full help
 
 If the input arg is not set, then the topology is read from standard input.
 If the output arg is not set, then the output is written to standard output.
@@ -33,8 +33,8 @@ import (
 
 var (
 	configPath string = ""
-	help bool = false
-	dumpConf bool = false
+	help       bool   = false
+	dumpConf   bool   = false
 )
 
 func init() {
@@ -94,7 +94,6 @@ func run() int {
 		}
 	}
 
-
 	var out io.Writer = os.Stdout
 	var tmpFile *os.File = nil
 	var dstFilename string
@@ -130,15 +129,14 @@ func run() int {
 
 	linkRouter := raumata.NewLinkRouter(&topo)
 	min, max := linkRouter.GetExtents()
-	linkRouter.SetExtents(int(min.X - 1), int(min.Y - 1), int(max.X + 1), int(max.Y + 1))
+	linkRouter.SetExtents(int(min.X-1), int(min.Y-1), int(max.X+1), int(max.Y+1))
 	linkRouter.RouteLinks()
 
 	raumata.PlaceLabels(&topo)
 
-
 	renderer := raumata.NewRendererWithConfig(renderConfig)
 	c := canvas.NewCanvas()
-	c.Margin = vec.Vec2{ X: 10, Y: 10 }
+	c.Margin = vec.Vec2{X: 10, Y: 10}
 
 	g, err := renderer.RenderTopology(&topo)
 	if err != nil {

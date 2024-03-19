@@ -100,8 +100,8 @@ func DefaultRenderConfig() *RenderConfig {
 }
 
 type Renderer struct {
-	Config      *RenderConfig
-	scale       float32
+	Config *RenderConfig
+	scale  float32
 }
 
 func NewRenderer() *Renderer {
@@ -260,8 +260,6 @@ func (r *Renderer) RenderNode(node *Node) (canvas.Object, error) {
 	// NOTE: this is where you'd branch off for different node styles
 	var nodeShape canvas.Object = canvas.NewCircle(pos, style.Size/2)
 
-
-
 	attrs := nodeShape.GetAttributes()
 	attrs.AddClass("node")
 	if node.Class != "" {
@@ -392,7 +390,7 @@ func (r *Renderer) RenderNodeLabel(node *Node) (canvas.Object, error) {
 	// Calculate the offset from the node position
 	// by rotating a vector to the appropriate position
 
-	offsetVec := vec.Vec2{ X: offsetDist, Y: 0 }
+	offsetVec := vec.Vec2{X: offsetDist, Y: 0}
 	textAdjust := vec.Vec2{}
 
 	// Don't place diagonal labels at the 45deg rotation,

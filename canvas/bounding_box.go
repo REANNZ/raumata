@@ -45,12 +45,12 @@ func (a *AABB) Union(b *AABB) *AABB {
 // Transform returns the AABB of a transformed by t
 func (a *AABB) Transform(t *vec.Transform) *AABB {
 	// Construct the four corners of the box, we
-	// can't just transform the min and max points as 
+	// can't just transform the min and max points as
 	// that won't produce an AABB for the whole box.
 	p0 := a.min
-	p1 := vec.Vec2{ X: a.min.X, Y: a.max.Y }
+	p1 := vec.Vec2{X: a.min.X, Y: a.max.Y}
 	p2 := a.max
-	p3 := vec.Vec2{ X: a.max.X, Y: a.min.Y }
+	p3 := vec.Vec2{X: a.max.X, Y: a.min.Y}
 
 	// Transform all the points
 	p0 = t.Apply(p0)

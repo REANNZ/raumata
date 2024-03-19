@@ -112,10 +112,10 @@ func evaluatePosition(pos internal.GridPos, dir direction, id NodeId, nodes map[
 			X: node.Pos[0],
 			Y: node.Pos[1],
 		}
-		
+
 		nPos := p.ToVec()
 		dist := testPos.Sub(nPos).Length()
-		score += dirCost / (dist*dist)
+		score += dirCost / (dist * dist)
 	}
 
 	// Apply a penalty for each occupied cell around the
@@ -127,7 +127,7 @@ func evaluatePosition(pos internal.GridPos, dir direction, id NodeId, nodes map[
 			continue
 		}
 		nPos := d.moveGridPos(pos)
-			
+
 		if _, ok := fillGrid[nPos]; ok {
 			var penalty float32
 			// If the occupied cell is to the left or right of
