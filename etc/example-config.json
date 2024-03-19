@@ -1,0 +1,19 @@
+{
+    "min-node-sep": 5,
+    "link-style": {
+        "fill": "#206abc"
+    },
+    "node-style": {
+        "stroke": "#509ce0"
+    },
+    "link-styles": {
+        "local": {
+            "size": 5,
+            "radius": 0,
+            "fill": "#bc55aa"
+        }
+    },
+    "node-label-style": {
+        "font-family": "DINPro, sans-serif"
+    }
+}

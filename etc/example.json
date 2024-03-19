@@ -1,0 +1,115 @@
+{
+    "nodes": {
+        "ARG": {
+            "pos": [0, 3]
+        },
+        "URG": {
+            "pos": [2, 7]
+        },
+        "HMH": {
+            "pos": [0, 7]
+        },
+        "AHA": {
+            "pos": [5, 1],
+            "style": {
+                "stroke-width": 5,
+                "size": 30
+            }
+        },
+        "OHI": {
+            "pos": [25, 0]
+        },
+        "RGR": {
+            "pos": [15, 9],
+            "label_at": "ne"
+        },
+        "BRR": {
+            "pos": [9, 3]
+        },
+        "BLB": {
+            "pos": [9, 4],
+            "style": {
+                "stroke-width": 3,
+                "size": 12
+            }
+        },
+        "GRG": {
+            "pos": [16, 11]
+        },
+        "RGB": {
+            "pos": [14, 11]
+        }
+    },
+    "links": [
+        {
+            "from": "ARG",
+            "to": "HMH"
+        },
+        {
+            "from": "ARG",
+            "to": "AHA"
+        },
+        {
+            "from": "HMH",
+            "to": "URG"
+        },
+        {
+            "from": "URG",
+            "to": "RGR"
+        },
+        {
+            "from": "URG",
+            "to": "RGR",
+            "via": [[5,9]],
+            "style": {
+                "size": 8
+            }
+        },
+        {
+            "from": "URG",
+            "to": "AHA"
+        },
+        {
+            "from": "RGR",
+            "to": "OHI",
+            "via": [
+                [25, 3]
+            ]
+        },
+        {
+            "from": "AHA",
+            "to": "OHI"
+        },
+        {
+            "from": "AHA",
+            "to": "BRR"
+        },
+        {
+            "from": "BRR",
+            "to": "OHI"
+        },
+        {
+            "from": "BRR",
+            "to": "BLB",
+            "style": {
+                "size": 4
+            }
+        },
+        {
+            "from": "RGR",
+            "to": "GRG",
+            "class": "local",
+            "via": [[16, 10]]
+        },
+        {
+            "from": "RGR",
+            "to": "RGB",
+            "class": "local"
+        },
+        {
+            "from": "RGB",
+            "to": "GRG",
+            "class": "local"
+        }
+    ]
+}
