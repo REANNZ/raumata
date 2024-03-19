@@ -1,8 +1,10 @@
 Raumata - Network Map Renderer
 ==============================
 
-Raumata is a library to aid in the creation of network maps.
+**Raumata** (Māori: 'mesh') is a library to aid in the creation of network maps.
 It is essentially a specialized graphics package for network maps.
+
+![Example network map](/etc/example.svg)
 
 ## Features
 

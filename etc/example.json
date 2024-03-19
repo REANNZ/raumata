@@ -1,7 +1,8 @@
 {
     "nodes": {
         "ARG": {
-            "pos": [0, 3]
+            "pos": [0, 3],
+            "label_at": "w"
         },
         "URG": {
             "pos": [2, 7]
@@ -26,13 +27,6 @@
         "BRR": {
             "pos": [9, 3]
         },
-        "BLB": {
-            "pos": [9, 4],
-            "style": {
-                "stroke-width": 3,
-                "size": 12
-            }
-        },
         "GRG": {
             "pos": [16, 11]
         },
@@ -43,73 +37,160 @@
     "links": [
         {
             "from": "ARG",
-            "to": "HMH"
+            "to": "HMH",
+            "from_data": {
+                "value": 0.54,
+                "label": "540M"
+            },
+            "to_data": {
+                "value": 0.55,
+                "label": "550M"
+            }
         },
         {
             "from": "ARG",
-            "to": "AHA"
+            "to": "AHA",
+            "from_data": {
+                "value": 0.005,
+                "label": "5M"
+            },
+            "to_data": {
+                "value": 0.02,
+                "label": "20M"
+            }
         },
         {
             "from": "HMH",
-            "to": "URG"
-        },
-        {
-            "from": "URG",
-            "to": "RGR"
-        },
-        {
-            "from": "URG",
-            "to": "RGR",
-            "via": [[5,9]],
-            "style": {
-                "size": 8
+            "to": "URG",
+            "from_data": {
+                "value": 0.04
+            },
+            "to_data": {
+                "value": 0.08
             }
         },
         {
             "from": "URG",
-            "to": "AHA"
+            "to": "RGR",
+            "from_data": {
+                "value": 0.09,
+                "label": "9G"
+            },
+            "to_data": {
+                "value": 0.11,
+                "label": "11G"
+            }
+        },
+        {
+            "from": "URG",
+            "to": "RGR",
+            "via": [[5, 9]],
+            "style": {
+                "size": 8
+            },
+            "from_data": {
+                "value": 0.03,
+                "label": "3M"
+            },
+            "to_data": {
+                "value": 0.01,
+                "label": "1M"
+            }
+        },
+        {
+            "from": "URG",
+            "to": "AHA",
+            "from_data": {
+                "value": 0.06,
+                "label": "600M"
+            },
+            "to_data": {
+                "value": 0.01,
+                "label": "100M"
+            }
         },
         {
             "from": "RGR",
             "to": "OHI",
-            "via": [
-                [25, 3]
-            ]
+            "via": [[25, 3]],
+            "from_data": {
+                "value": 0.26,
+                "label": "26G"
+            },
+            "to_data": {
+                "value": 0.28,
+                "label": "28G"
+            }
         },
         {
             "from": "AHA",
-            "to": "OHI"
+            "to": "OHI",
+            "from_data": {
+                "value": 0.09,
+                "label": "9G"
+            },
+            "to_data": {
+                "value": 0.09,
+                "label": "9G"
+            }
         },
         {
             "from": "AHA",
-            "to": "BRR"
+            "to": "BRR",
+            "from_data": {
+                "value": 0.38,
+                "label": "3.8G"
+            },
+            "to_data": {
+                "value": 0.41,
+                "label": "4.1G"
+            }
         },
         {
             "from": "BRR",
-            "to": "OHI"
-        },
-        {
-            "from": "BRR",
-            "to": "BLB",
-            "style": {
-                "size": 4
+            "to": "OHI",
+            "from_data": {
+                "value": 0.03,
+                "label": "300M"
+            },
+            "to_data": {
+                "value": 0.01,
+                "label": "100M"
             }
         },
         {
             "from": "RGR",
             "to": "GRG",
             "class": "local",
-            "via": [[16, 10]]
+            "via": [[16, 10]],
+            "from_data": {
+                "value": 0.09
+            },
+            "to_data": {
+                "value": 0.29
+            }
         },
         {
             "from": "RGR",
             "to": "RGB",
-            "class": "local"
+            "class": "local",
+            "from_data": {
+                "value": 0.45
+            },
+            "to_data": {
+                "value": 0.47
+            }
         },
         {
             "from": "RGB",
             "to": "GRG",
-            "class": "local"
+            "class": "local",
+            "from_data": {
+                "value": 0.4
+            },
+            "to_data": {
+                "value": 0.45
+            }
         }
     ]
 }
