@@ -58,11 +58,6 @@ func main() {
 func run() int {
 
 	renderConfig := raumata.DefaultRenderConfig()
-	b, err := json.Marshal(renderConfig)
-	if err == nil {
-		os.Stderr.Write(b)
-	}
-
 	if configPath != "" {
 		f, err := os.Open(configPath)
 		if err != nil {
