@@ -32,6 +32,11 @@ func checkStyleEq(t *testing.T, expected, actual *Style) {
 		t.Errorf("StrokeOpacity not correct, expected %s, got %s",
 			&expected.StrokeOpacity, &actual.StrokeOpacity)
 	}
+
+	if actual.FontFamily != expected.FontFamily {
+		t.Errorf("FontFamily not correct, expected %s, got %s",
+			expected.FontFamily, actual.FontFamily)
+	}
 }
 
 func TestStyleChanged(t *testing.T) {
@@ -63,4 +68,98 @@ func TestStyleChanged(t *testing.T) {
 	changed = s.Changed(s2)
 
 	checkStyleEq(t, expected, changed)
+}
+
+func TestSelectorMatches(t *testing.T) {
+	selector := Selector{}
+
+	if !selector.Matches([]string{"test"}) {
+		t.Errorf("Empty selector should match any classes")
+	}
+
+	if !selector.Matches([]string{"foo", "bar", "baz"}) {
+		t.Errorf("Empty selector should match any classes")
+	}
+
+	selector = Selector{"foo"}
+
+	if !selector.Matches([]string{"foo"}) {
+		t.Errorf("'foo' selector did not match 'foo'")
+	}
+	if selector.Matches([]string{"bar"}) {
+		t.Errorf("'foo' selector should not match 'bar'")
+	}
+	if !selector.Matches([]string{"foo", "bar", "baz"}) {
+		t.Errorf("'foo' selector did not match 'foo', 'bar', 'baz'")
+	}
+
+	selector = Selector{"foo", "bar", "baz"}
+	if selector.Matches([]string{"foo"}) {
+		t.Errorf("'foo', 'bar', 'baz' selector should not match 'foo'")
+	}
+	if !selector.Matches([]string{"foo", "bar", "baz"}) {
+		t.Errorf("'foo', 'bar', 'baz' selector did not match 'foo', 'bar', 'baz'")
+	}
+}
+
+func TestStylesheet(t *testing.T) {
+	stylesheet := Stylesheet{}
+
+	a := NewStyle()
+	a.FillColor = RGB(1, 0, 0)
+	stylesheet.AddRule(Selector{"a"}, a)
+
+	b := NewStyle()
+	b.StrokeColor = RGB(0, 1, 0)
+	stylesheet.AddRule(Selector{"b"}, b)
+
+	c := NewStyle()
+	c.Opacity.Set(0.5)
+	stylesheet.AddRule(Selector{"c"}, c)
+
+	rules := stylesheet.GetRules([]string{"a"})
+	if len(rules) != 1 {
+		t.Errorf("Expected one rule to match 'a', got %d", len(rules))
+	}
+
+	rule := rules[0]
+	if len(rule.Selector) != 1 && rule.Selector[0] != "a" {
+		t.Errorf("Incorrect selector: %v", rule.Selector)
+	}
+	checkStyleEq(t, a, rule.Style)
+
+	rules = stylesheet.GetRules([]string{"b"})
+	if len(rules) != 1 {
+		t.Errorf("Expected one rule to match 'b', got %d", len(rules))
+	}
+
+	rule = rules[0]
+	if len(rule.Selector) != 1 && rule.Selector[0] != "b" {
+		t.Errorf("Incorrect selector: %v", rule.Selector)
+	}
+	checkStyleEq(t, b, rule.Style)
+
+	rules = stylesheet.GetRules([]string{"c"})
+	if len(rules) != 1 {
+		t.Errorf("Expected one rule to match 'c', got %d", len(rules))
+	}
+
+	rule = rules[0]
+	if len(rule.Selector) != 1 && rule.Selector[0] != "c" {
+		t.Errorf("Incorrect selector: %v", rule.Selector)
+	}
+	checkStyleEq(t, c, rule.Style)
+
+	rules = stylesheet.GetRules([]string{"a", "b", "c"})
+	if len(rules) != 3 {
+		t.Errorf("Expected three rules to match 'a', 'b', 'c', got %d", len(rules))
+	}
+
+	expectedStyle := NewStyle()
+	expectedStyle.FillColor = RGB(1, 0, 0)
+	expectedStyle.StrokeColor = RGB(0, 1, 0)
+	expectedStyle.Opacity.Set(0.5)
+	style := stylesheet.GetStyle([]string{"a", "b", "c"})
+
+	checkStyleEq(t, expectedStyle, style)
 }

@@ -299,6 +299,9 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 	linkGroup := canvas.NewGroup()
 	linkGroup.Attributes.Id = string("L-" + link.Id)
 	linkGroup.Attributes.AddClass("link")
+	if link.Class != "" {
+		linkGroup.Attributes.AddClass(link.Class)
+	}
 
 	// NOTE: This is where you'd branch off for different link styles
 	//       (e.g. double line instead of opposing arrows)
@@ -488,31 +491,33 @@ func (r *Renderer) RenderLinkLabel(pos vec.Vec2, text string) (canvas.Object, er
 // * "link-label-text" - Styles that apply to all link labels
 // * "link-label-box" - Styles that apply to all link labels
 func (r *Renderer) SetStyles(c *canvas.Canvas) {
-	c.Styles["node"] = r.Config.DefaultNodeStyle.Style
+	c.Stylesheet.AddRule(canvas.Selector{"node"}, r.Config.DefaultNodeStyle.Style)
 	for cls, style := range r.Config.NodeStyles {
-		c.Styles[cls] = style.Style
+		sel := canvas.Selector{"node", cls}
+		c.Stylesheet.AddRule(sel, style.Style)
 	}
-	c.Styles["link-segment"] = r.Config.DefaultLinkStyle.Style
+	c.Stylesheet.AddRule(canvas.Selector{"link-segment"}, r.Config.DefaultLinkStyle.Style)
 	for cls, style := range r.Config.LinkStyles {
-		c.Styles[cls] = style.Style
+		sel := canvas.Selector{"link", cls}
+		c.Stylesheet.AddRule(sel, style.Style)
 	}
 
 	nodeLabelStyle := canvas.NewStyle()
 	nodeLabelStyle.FillColor = r.Config.NodeLabelStyle.Color
 	nodeLabelStyle.FontFamily = r.Config.NodeLabelStyle.FontFamily
-	c.Styles["node-label-text"] = nodeLabelStyle
+	c.Stylesheet.AddRule(canvas.Selector{"node-label-text"}, nodeLabelStyle)
 
 	linkLabelTextStyle := canvas.NewStyle()
 	linkLabelTextStyle.FillColor = r.Config.LinkLabelStyle.Color
 	linkLabelTextStyle.FontFamily = r.Config.LinkLabelStyle.FontFamily
-	c.Styles["link-label-text"] = linkLabelTextStyle
+	c.Stylesheet.AddRule(canvas.Selector{"link-label-text"}, linkLabelTextStyle)
 
 	linkLabelBoxStyle := canvas.NewStyle()
 	linkLabelBoxStyle.FillColor = r.Config.LinkLabelStyle.Background
 	linkLabelBoxStyle.StrokeColor = r.Config.LinkLabelStyle.Border
 	linkLabelBoxStyle.Opacity.Set(r.Config.LinkLabelStyle.Opacity)
 	linkLabelBoxStyle.StrokeWidth.Set(1)
-	c.Styles["link-label-box"] = linkLabelBoxStyle
+	c.Stylesheet.AddRule(canvas.Selector{"link-label-box"}, linkLabelBoxStyle)
 }
 
 // Helper function for rendering shapes in grid-space at the appropriate scale.

@@ -5,15 +5,13 @@ import "github.com/REANNZ/raumata/vec"
 // A Canvas represents an abstract surface to draw to
 type Canvas struct {
 	Element
-	Margin vec.Vec2 // Specifies the margin around the image
-	Styles map[string]*Style
+	Margin     vec.Vec2 // Specifies the margin around the image
+	Stylesheet Stylesheet
 }
 
 // NewCanvas returns a new Canvas to draw to
 func NewCanvas() *Canvas {
-	return &Canvas{
-		Styles: map[string]*Style{},
-	}
+	return &Canvas{}
 }
 
 // Returns the axis aligned bounding box of the image

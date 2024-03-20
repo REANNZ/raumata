@@ -2,6 +2,7 @@ package canvas
 
 import (
 	"encoding/json"
+	"slices"
 
 	"github.com/REANNZ/raumata/option"
 )
@@ -105,8 +106,7 @@ func (s *Style) Changed(other *Style) *Style {
 
 func (s *Style) UnmarshalJSON(data []byte) error {
 	if s == nil {
-		sp := &s
-		*sp = NewStyle()
+		return nil
 	}
 
 	newStyle := Style{}
@@ -163,4 +163,114 @@ func (s *Style) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(obj)
+}
+
+// Stylesheet represents a set of reusable styles that
+// allow for style information to be defined separately from
+// individual elements.
+//
+// It is loosely modeled on a simplified version of CSS, basically
+// only supporting classes.
+type Stylesheet struct {
+	rules []Rule
+}
+
+// An individual rule in a stylesheet
+type Rule struct {
+	Selector Selector
+	Style    *Style
+}
+
+// The selection rule that matches classes to styles.
+type Selector []string
+
+// GetAllRules returns all the rules in the stylesheet
+func (ss *Stylesheet) GetAllRules() []Rule {
+	return ss.rules
+}
+
+// HasRule returns if the stylesheet has any rules defined
+func (ss *Stylesheet) HasRules() bool {
+	return len(ss.rules) > 0
+}
+
+// AddRule adds a new rule to the stylesheet
+func (ss *Stylesheet) AddRule(sel Selector, style *Style) {
+	if ss == nil || style == nil {
+		return
+	}
+	r := Rule{
+		Selector: sel,
+		Style:    style,
+	}
+
+	ss.rules = append(ss.rules, r)
+
+	// Ensure the rules stay sorted as `GetStyle` relies on
+	// this property
+	slices.SortStableFunc(ss.rules, func(a, b Rule) int {
+		aLen := len(a.Selector)
+		bLen := len(b.Selector)
+
+		if aLen < bLen {
+			return 1
+		} else if aLen > bLen {
+			return -1
+		} else {
+			return 0
+		}
+	})
+}
+
+// GetRules returns all the rules matching the given classes
+func (ss *Stylesheet) GetRules(classes []string) []Rule {
+	if ss == nil {
+		return nil
+	}
+
+	rules := []Rule{}
+	for _, rule := range ss.rules {
+		if rule.Selector.Matches(classes) {
+			rules = append(rules, rule)
+		}
+	}
+
+	return rules
+}
+
+// GetStyle returns the combined style of all styles that match
+// the given classes
+func (ss *Stylesheet) GetStyle(classes []string) *Style {
+	if ss == nil {
+		return nil
+	}
+
+	newStyle := NewStyle()
+
+	// This relies on the styles being sorted from most specific
+	// to least specific
+	for _, r := range ss.GetRules(classes) {
+		newStyle.Merge(r.Style)
+	}
+
+	return newStyle
+}
+
+// Matches returns true if this selector matches the given
+// classes
+func (s Selector) Matches(classes []string) bool {
+	for _, selClass := range s {
+		hasClass := false
+		for _, cls := range classes {
+			if selClass == cls {
+				hasClass = true
+				break
+			}
+		}
+		if !hasClass {
+			return false
+		}
+	}
+
+	return true
 }

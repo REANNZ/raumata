@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="376px" viewBox="-55.199997 -36.534313 826.757568 375.934296" width="827px" xmlns="http://www.w3.org/2000/svg">
+<svg height="376px" viewBox="-55.2 -36.53 826.76 375.93" width="827px" xmlns="http://www.w3.org/2000/svg">
   <g id="topology">
     <g id="links">
       <g class="link" id="L-AHA-BRR">
@@ -91,7 +91,7 @@
           <path d="M58,198 H34 L29,203 34,208 H58 Z" fill="#1c717f"/>
         </g>
       </g>
-      <g class="link" id="L-RGB-GRG">
+      <g class="link local" fill="#bc55aa" id="L-RGB-GRG">
         <g class="link-segment" data-from="RGB" data-to="GRG" fill="#206abc" stroke-width="0">
           <path d="M406,321.5 H432.5 L435,319 432.5,316.5 H406 Z" fill="#d1f00e"/>
         </g>
@@ -99,7 +99,7 @@
           <path d="M464,316.5 H437.5 L435,319 437.5,321.5 H464 Z" fill="#d1f00e"/>
         </g>
       </g>
-      <g class="link" id="L-RGR-GRG">
+      <g class="link local" fill="#bc55aa" id="L-RGR-GRG">
         <g class="link-segment" data-from="RGR" data-to="GRG" fill="#206abc" stroke-width="0">
           <path d="M433.23,262.77 456.22,285.75 H459.75 V282.22 L436.77,259.23 Z" fill="#1b8864"/>
         </g>
@@ -123,7 +123,7 @@
           </g>
         </g>
       </g>
-      <g class="link" id="L-RGR-RGB">
+      <g class="link local" fill="#bc55aa" id="L-RGR-RGB">
         <g class="link-segment" data-from="RGR" data-to="RGB" fill="#206abc" stroke-width="0">
           <path d="M433.23,259.23 410.25,282.22 V285.75 H413.78 L436.77,262.77 Z" fill="#f6df15"/>
         </g>

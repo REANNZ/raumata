@@ -117,7 +117,7 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 	attrs["viewBox"] = viewBox
 
 	// Start rendering
-	if r.StyleMode != SVGStyleInternal || len(canvas.Styles) == 0 {
+	if r.StyleMode != SVGStyleInternal || !canvas.Stylesheet.HasRules() {
 		return r.writeElement("svg", attrs, canvas.Children, nil)
 	} else {
 		err := r.writeOpenElement("svg", attrs, false)
@@ -126,7 +126,7 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 		}
 
 		r.level += 1
-		err = r.writeStylesheet(canvas.Styles)
+		err = r.writeStylesheet(canvas.Stylesheet)
 		if err != nil {
 			return err
 		}
@@ -242,7 +242,7 @@ func (r *SVGRenderer) RenderPolygon(polygon *Polygon) error {
 // RenderPath renders a [Path] object to a `<path>` object
 func (r *SVGRenderer) RenderPath(path *Path) error {
 
-	eps := f32.Pow(10, -(float32(r.Precision+1)))
+	eps := f32.Pow(10, -(float32(r.Precision + 1)))
 
 	attrs := r.convertAttributes(&path.Attributes)
 
@@ -330,7 +330,7 @@ func (r *SVGRenderer) RenderText(text *Text) error {
 
 }
 
-func (r *SVGRenderer) writeStylesheet(styles map[string]*Style) error {
+func (r *SVGRenderer) writeStylesheet(stylesheet Stylesheet) error {
 	if err := r.writeOpenElement("defs", nil, false); err != nil {
 		return err
 	}
@@ -344,12 +344,20 @@ func (r *SVGRenderer) writeStylesheet(styles map[string]*Style) error {
 		return err
 	}
 
-	for class, style := range styles {
-		if _, err := fmt.Fprintf(r.f, ".%s {\n", class); err != nil {
+	ssRules := stylesheet.GetAllRules()
+	rules := make([]Rule, len(ssRules))
+
+	copy(rules, ssRules)
+
+	slices.Reverse(rules)
+
+	for _, rule := range rules {
+		selector := strings.Join(rule.Selector, ".")
+		if _, err := fmt.Fprintf(r.f, ".%s {\n", selector); err != nil {
 			return err
 		}
 
-		if _, err := io.WriteString(r.f, style.toCSS(r.Indent)); err != nil {
+		if _, err := io.WriteString(r.f, rule.Style.toCSS(r.Indent)); err != nil {
 			return err
 		}
 
@@ -553,12 +561,8 @@ func (r *SVGRenderer) convertAttributes(attrs *Attributes) map[string]string {
 	if r.StyleMode == SVGStyleNone {
 		// We aren't using stylesheets, so we need to include the
 		// styles from classes
-		for _, cls := range attrs.Classes {
-			classStyle := r.getClassStyle(cls)
-			if classStyle != nil {
-				style.Merge(classStyle)
-			}
-		}
+		classStyle := r.canvas.Stylesheet.GetStyle(attrs.Classes)
+		style.Merge(classStyle)
 
 		// Only emit attributes for changed style values
 		style = r.currentStyle.Changed(style)
@@ -601,10 +605,6 @@ func (r *SVGRenderer) convertAttributes(attrs *Attributes) map[string]string {
 	}
 
 	return out
-}
-
-func (r *SVGRenderer) getClassStyle(class string) *Style {
-	return r.canvas.Styles[class]
 }
 
 func (s *Style) toCSS(indent int) string {
