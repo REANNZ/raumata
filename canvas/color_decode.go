@@ -98,6 +98,12 @@ func (c *typeConverter) convert(t reflect.Type) reflect.Type {
 	c.pushType(t)
 	defer c.popType()
 
+	// We've already converted this type at some point, return it
+	// from the cache.
+	if ty, ok := typeCache.Load(t); ok {
+		return ty.(reflect.Type)
+	}
+
 	switch t.Kind() {
 	case reflect.Struct:
 
@@ -122,6 +128,8 @@ func (c *typeConverter) convert(t reflect.Type) reflect.Type {
 			}
 		}
 
+		// The above loop didn't convert any fields,
+		// so store it and return the original type
 		if !anyNew {
 			ty, _ := typeCache.LoadOrStore(t, t)
 			return ty.(reflect.Type)
