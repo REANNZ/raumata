@@ -81,7 +81,11 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 	max = max.Add(canvas.Margin)
 	size := max.Sub(min)
 
-	viewBox := fmt.Sprintf("%f %f %f %f", min.X, min.Y, size.X, size.Y)
+	viewBox := fmt.Sprintf("%s %s %s %s",
+		r.formatFloat32(min.X),
+		r.formatFloat32(min.Y),
+		r.formatFloat32(size.X),
+		r.formatFloat32(size.Y))
 
 	// Calculate the image's width and height
 	var width, height int
