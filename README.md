@@ -1,3 +1,5 @@
+[![Go Reference](https://pkg.go.dev/badge/github.com/REANNZ/raumata.svg)](https://pkg.go.dev/github.com/REANNZ/raumata)
+
 Raumata - Network Map Renderer
 ==============================
 
