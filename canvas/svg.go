@@ -51,7 +51,7 @@ func NewSVGRenderer(f io.Writer) *SVGRenderer {
 		currentStyle: NewStyle(),
 
 		IncludeHeader:  true,
-		Precision:      3,
+		Precision:      2,
 		RootAttributes: make(map[string]any),
 	}
 }
@@ -238,22 +238,39 @@ func (r *SVGRenderer) RenderPolygon(polygon *Polygon) error {
 // RenderPath renders a [Path] object to a `<path>` object
 func (r *SVGRenderer) RenderPath(path *Path) error {
 
+	eps := f32.Pow(10, -(float32(r.Precision+1)))
+
 	attrs := r.convertAttributes(&path.Attributes)
 
 	data := ""
 
-	prevCmd := CommandClosePath
+	prevPos := vec.Vec2{}
+	prevCmdCode := ""
 	for _, cmd := range path.Data {
 		switch cmd.Type {
 		case CommandClosePath:
 			data += "Z"
+			prevCmdCode = "Z"
 		case CommandMoveTo:
 			data += fmt.Sprintf("M%s,%s ", r.formatFloat32(cmd.Args[0]), r.formatFloat32(cmd.Args[1]))
+			prevCmdCode = "M"
 		case CommandLineTo:
-			if prevCmd != CommandLineTo && prevCmd != CommandMoveTo {
-				data += "L"
+			if prevPos.ApproxEq(cmd.Pos, eps) {
+				continue
 			}
-			data += fmt.Sprintf("%s,%s ", r.formatFloat32(cmd.Args[0]), r.formatFloat32(cmd.Args[1]))
+			if prevPos.X == cmd.Pos.X {
+				data += fmt.Sprintf("V%s ", r.formatFloat32(cmd.Args[1]))
+				prevCmdCode = "V"
+			} else if prevPos.Y == cmd.Pos.Y {
+				data += fmt.Sprintf("H%s ", r.formatFloat32(cmd.Args[0]))
+				prevCmdCode = "H"
+			} else {
+				if prevCmdCode != "L" && prevCmdCode != "M" {
+					data += "L"
+					prevCmdCode = "L"
+				}
+				data += fmt.Sprintf("%s,%s ", r.formatFloat32(cmd.Args[0]), r.formatFloat32(cmd.Args[1]))
+			}
 		case CommandArcTo:
 			start := vec.Vec2{X: cmd.Args[0], Y: cmd.Args[1]}
 			end := vec.Vec2{X: cmd.Args[2], Y: cmd.Args[3]}
@@ -270,8 +287,9 @@ func (r *SVGRenderer) RenderPath(path *Path) error {
 			radStr := r.formatFloat32(radius)
 			data += fmt.Sprintf("A%s,%s 0 0,%d %s,%s ",
 				radStr, radStr, sweep, r.formatFloat32(end.X), r.formatFloat32(end.Y))
+			prevCmdCode = "A"
 		}
-		prevCmd = cmd.Type
+		prevPos = cmd.Pos
 	}
 
 	attrs["d"] = data
@@ -455,7 +473,14 @@ func (r *SVGRenderer) formatFloat32(f float32) string {
 	if f == f32.Round(f) {
 		prec = 0
 	}
-	return strconv.FormatFloat(float64(f), 'f', prec, 32)
+	s := strconv.FormatFloat(float64(f), 'f', prec, 32)
+	if prec > 0 {
+		s = strings.TrimRight(s, ".0")
+	}
+	if s == "" {
+		return "0"
+	}
+	return s
 }
 
 func (r *SVGRenderer) convertAttributeMap(attrs map[string]any) map[string]string {

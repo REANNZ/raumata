@@ -5,176 +5,176 @@
     <g id="links">
       <g class="link" id="L-AHA-BRR">
         <g class="link-segment" data-from="AHA" data-to="BRR" fill="#206abc" stroke-width="0">
-          <path d="M141.464,32.536 187.435,78.506 194.506,78.506 194.506,71.435 148.536,25.464 Z" fill="#b6e80f"/>
+          <path d="M141.46,32.54 187.44,78.51 H194.51 V71.44 L148.54,25.46 Z" fill="#b6e80f"/>
           <g class="link-label" transform="translate(171.52, 55.52)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">3.8G</text>
           </g>
         </g>
         <g class="link-segment" data-from="BRR" data-to="AHA" fill="#206abc" stroke-width="0">
-          <path d="M261,82 207.142,82 A5,5 0 0,1 203.607,80.536 L201.577,78.506 194.506,78.506 194.506,85.577 196.536,87.607 A15,15 0 0,0 207.142,92 L261,92 Z" fill="#b6e80f"/>
+          <path d="M261,82 H207.14 A5,5 0 0,1 203.61,80.54 L201.58,78.51 H194.51 V85.58 L196.54,87.61 A15,15 0 0,0 207.14,92 H261 Z" fill="#b6e80f"/>
           <g class="link-label" transform="translate(223.49, 87.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">4.1G</text>
           </g>
         </g>
       </g>
       <g class="link" id="L-AHA-OHI">
         <g class="link-segment" data-from="AHA" data-to="OHI" fill="#206abc" stroke-width="0">
-          <path d="M148.536,32.536 174.607,6.464 A5,5 0 0,1 178.142,5.000 L423.994,5 428.994,0 423.994,-5 178.142,-5 A15,15 0 0,0 167.536,-0.607 L141.464,25.464 Z" fill="#1b8864"/>
+          <path d="M148.54,32.54 174.61,6.46 A5,5 0 0,1 178.14,5 L423.99,5 428.99,0 423.99,-5 H178.14 A15,15 0 0,0 167.54,-0.61 L141.46,25.46 Z" fill="#1b8864"/>
           <g class="link-label" transform="translate(283.49, 0.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">9G</text>
           </g>
         </g>
         <g class="link-segment" data-from="OHI" data-to="AHA" fill="#206abc" stroke-width="0">
-          <path d="M725,-5 433.994,-5 428.994,0 433.994,5 725,5 Z" fill="#1b8864"/>
+          <path d="M725,-5 H433.99 L428.99,0 433.99,5 H725 Z" fill="#1b8864"/>
           <g class="link-label" transform="translate(574.50, 0.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">9G</text>
           </g>
         </g>
       </g>
       <g class="link" id="L-ARG-AHA">
         <g class="link-segment" data-from="ARG" data-to="AHA" fill="#206abc" stroke-width="0">
-          <path d="M0,92 64.488,92 69.488,87 64.488,82 0,82 Z" fill="#1d4d78"/>
+          <path d="M0,92 H64.49 L69.49,87 64.49,82 H0 Z" fill="#1d4d78"/>
           <g class="link-label" transform="translate(37.24, 87.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">5M</text>
           </g>
         </g>
         <g class="link-segment" data-from="AHA" data-to="ARG" fill="#206abc" stroke-width="0">
-          <path d="M141.464,25.464 86.393,80.536 A5,5 0 0,1 82.858,82 L74.488,82 69.488,87 74.488,92 82.858,92 A15,15 0 0,0 93.464,87.607 L148.536,32.536 Z" fill="#1d4d78"/>
+          <path d="M141.46,25.46 86.39,80.54 A5,5 0 0,1 82.86,82 H74.49 L69.49,87 74.49,92 H82.86 A15,15 0 0,0 93.46,87.61 L148.54,32.54 Z" fill="#1d4d78"/>
           <g class="link-label" transform="translate(106.39, 67.61)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">20M</text>
           </g>
         </g>
       </g>
       <g class="link" id="L-ARG-HMH">
         <g class="link-segment" data-from="ARG" data-to="HMH" fill="#206abc" stroke-width="0">
-          <path d="M-5,87 -5,140 0,145 5,140 5,87 Z" fill="#faa725"/>
+          <path d="M-5,87 V140 L0,145 5,140 V87 Z" fill="#faa725"/>
           <g class="link-label" transform="translate(0.00, 118.50)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">540M</text>
           </g>
         </g>
         <g class="link-segment" data-from="HMH" data-to="ARG" fill="#206abc" stroke-width="0">
-          <path d="M5,203 5,150 0,145 -5,150 -5,203 Z" fill="#faa725"/>
+          <path d="M5,203 V150 L0,145 -5,150 V203 Z" fill="#faa725"/>
           <g class="link-label" transform="translate(0.00, 171.50)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">550M</text>
           </g>
         </g>
       </g>
       <g class="link" id="L-BRR-OHI">
         <g class="link-segment" data-from="BRR" data-to="OHI" fill="#206abc" stroke-width="0">
-          <path d="M261,92 506.018,92 511.018,87 506.018,82 261,82 Z" fill="#1d667d"/>
+          <path d="M261,92 H506.02 L511.02,87 506.02,82 H261 Z" fill="#1d667d"/>
           <g class="link-label" transform="translate(388.51, 87.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">300M</text>
           </g>
         </g>
         <g class="link-segment" data-from="OHI" data-to="BRR" fill="#206abc" stroke-width="0">
-          <path d="M721.464,-3.536 637.393,80.536 A5,5 0 0,1 633.858,82 L516.018,82 511.018,87 516.018,92 633.858,92 A15,15 0 0,0 644.464,87.607 L728.536,3.536 Z" fill="#1d667d"/>
+          <path d="M721.46,-3.54 637.39,80.54 A5,5 0 0,1 633.86,82 H516.02 L511.02,87 516.02,92 H633.86 A15,15 0 0,0 644.46,87.61 L728.54,3.54 Z" fill="#1d667d"/>
           <g class="link-label" transform="translate(633.53, 87.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">100M</text>
           </g>
         </g>
       </g>
       <g class="link" id="L-HMH-URG">
         <g class="link-segment" data-from="HMH" data-to="URG" fill="#206abc" stroke-width="0">
-          <path d="M0,208 24,208 29,203 24,198 0,198 Z" fill="#1c717f"/>
+          <path d="M0,208 H24 L29,203 24,198 H0 Z" fill="#1c717f"/>
         </g>
         <g class="link-segment" data-from="URG" data-to="HMH" fill="#206abc" stroke-width="0">
-          <path d="M58,198 34,198 29,203 34,208 58,208 Z" fill="#1c717f"/>
+          <path d="M58,198 H34 L29,203 34,208 H58 Z" fill="#1c717f"/>
         </g>
       </g>
       <g class="link" id="L-RGB-GRG">
         <g class="link-segment" data-from="RGB" data-to="GRG" fill="#206abc" stroke-width="0">
-          <path d="M406,321.500 432.500,321.500 435,319 432.500,316.500 406,316.500 Z" fill="#d1f00e"/>
+          <path d="M406,321.5 H432.5 L435,319 432.5,316.5 H406 Z" fill="#d1f00e"/>
         </g>
         <g class="link-segment" data-from="GRG" data-to="RGB" fill="#206abc" stroke-width="0">
-          <path d="M464,316.500 437.500,316.500 435,319 437.500,321.500 464,321.500 Z" fill="#d1f00e"/>
+          <path d="M464,316.5 H437.5 L435,319 437.5,321.5 H464 Z" fill="#d1f00e"/>
         </g>
       </g>
       <g class="link" id="L-RGR-GRG">
         <g class="link-segment" data-from="RGR" data-to="GRG" fill="#206abc" stroke-width="0">
-          <path d="M433.232,262.768 456.218,285.753 459.753,285.753 459.753,282.217 436.768,259.232 Z" fill="#1b8864"/>
+          <path d="M433.23,262.77 456.22,285.75 H459.75 V282.22 L436.77,259.23 Z" fill="#1b8864"/>
         </g>
         <g class="link-segment" data-from="GRG" data-to="RGR" fill="#206abc" stroke-width="0">
-          <path d="M466.500,319 466.500,290 A2.500,2.500 0 0,0 465.768,288.232 L463.289,285.753 459.753,285.753 459.753,289.289 461.500,291.036 461.500,319 Z" fill="#1b8864"/>
+          <path d="M466.5,319 V290 A2.5,2.5 0 0,0 465.77,288.23 L463.29,285.75 H459.75 L459.75,289.29 461.5,291.04 V319 Z" fill="#1b8864"/>
         </g>
       </g>
       <g class="link" id="L-RGR-OHI">
         <g class="link-segment" data-from="RGR" data-to="OHI" fill="#206abc" stroke-width="0">
-          <path d="M435,266 546.858,266 A15,15 0 0,0 557.464,261.607 L627.747,191.324 627.747,184.253 620.676,184.253 550.393,254.536 A5,5 0 0,1 546.858,256 L435,256 Z" fill="#37be16"/>
+          <path d="M435,266 H546.86 A15,15 0 0,0 557.46,261.61 L627.75,191.32 V184.25 H620.68 L550.39,254.54 A5,5 0 0,1 546.86,256 H435 Z" fill="#37be16"/>
           <g class="link-label" transform="translate(549.77, 261.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">26G</text>
           </g>
         </g>
         <g class="link-segment" data-from="OHI" data-to="RGR" fill="#206abc" stroke-width="0">
-          <path d="M720,0 720,82.858 A5,5 0 0,1 718.536,86.393 L627.747,177.182 627.747,184.253 634.818,184.253 725.607,93.464 A15,15 0 0,0 730,82.858 L730,0 Z" fill="#37be16"/>
+          <path d="M720,0 V82.86 A5,5 0 0,1 718.54,86.39 L627.75,177.18 V184.25 H634.82 L725.61,93.46 A15,15 0 0,0 730,82.86 V0 Z" fill="#37be16"/>
           <g class="link-label" transform="translate(705.36, 106.64)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">28G</text>
           </g>
         </g>
       </g>
       <g class="link" id="L-RGR-RGB">
         <g class="link-segment" data-from="RGR" data-to="RGB" fill="#206abc" stroke-width="0">
-          <path d="M433.232,259.232 410.247,282.217 410.247,285.753 413.782,285.753 436.768,262.768 Z" fill="#f6df15"/>
+          <path d="M433.23,259.23 410.25,282.22 V285.75 H413.78 L436.77,262.77 Z" fill="#f6df15"/>
         </g>
         <g class="link-segment" data-from="RGB" data-to="RGR" fill="#206abc" stroke-width="0">
-          <path d="M408.500,319 408.500,291.036 410.247,289.289 410.247,285.753 406.711,285.753 404.232,288.232 A2.500,2.500 0 0,0 403.500,290 L403.500,319 Z" fill="#f6df15"/>
+          <path d="M408.5,319 V291.04 L410.25,289.29 410.25,285.75 H406.71 L404.23,288.23 A2.5,2.5 0 0,0 403.5,290 V319 Z" fill="#f6df15"/>
         </g>
       </g>
       <g class="link" id="L-URG-AHA">
         <g class="link-segment" data-from="URG" data-to="AHA" fill="#206abc" stroke-width="0">
-          <path d="M61.536,206.536 132.259,135.812 132.259,128.741 125.188,128.741 54.464,199.464 Z" fill="#1c837d"/>
+          <path d="M61.54,206.54 132.26,135.81 V128.74 H125.19 L54.46,199.46 Z" fill="#1c837d"/>
           <g class="link-label" transform="translate(96.90, 164.10)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">600M</text>
           </g>
         </g>
         <g class="link-segment" data-from="AHA" data-to="URG" fill="#206abc" stroke-width="0">
-          <path d="M140,29 140,111.858 A5,5 0 0,1 138.536,115.393 L132.259,121.670 132.259,128.741 139.330,128.741 145.607,122.464 A15,15 0 0,0 150,111.858 L150,29 Z" fill="#1c837d"/>
+          <path d="M140,29 V111.86 A5,5 0 0,1 138.54,115.39 L132.26,121.67 V128.74 H139.33 L145.61,122.46 A15,15 0 0,0 150,111.86 V29 Z" fill="#1c837d"/>
           <g class="link-label" transform="translate(145.00, 84.01)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">100M</text>
           </g>
         </g>
       </g>
       <g class="link" id="L-URG-RGR">
         <g class="link-segment" data-from="URG" data-to="RGR" fill="#206abc" stroke-width="0">
-          <path d="M58,208 253.512,208 258.512,203 253.512,198 58,198 Z" fill="#1b8864"/>
+          <path d="M58,208 H253.51 L258.51,203 253.51,198 H58 Z" fill="#1b8864"/>
           <g class="link-label" transform="translate(160.76, 203.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">9G</text>
           </g>
         </g>
         <g class="link-segment" data-from="RGR" data-to="URG" fill="#206abc" stroke-width="0">
-          <path d="M438.536,257.464 383.464,202.393 A15,15 0 0,0 372.858,198 L263.512,198 258.512,203 263.512,208 372.858,208 A5,5 0 0,1 376.393,209.464 L431.464,264.536 Z" fill="#1b8864"/>
+          <path d="M438.54,257.46 383.46,202.39 A15,15 0 0,0 372.86,198 H263.51 L258.51,203 263.51,208 H372.86 A5,5 0 0,1 376.39,209.46 L431.46,264.54 Z" fill="#1b8864"/>
           <g class="link-label" transform="translate(356.27, 203.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">11G</text>
           </g>
         </g>
       </g>
       <g class="link" id="L-URG-RGR-2">
         <g class="link-segment" data-from="URG" data-to="RGR" fill="#206abc" stroke-width="0">
-          <path d="M55.172,205.828 110.243,260.900 A14,14 0 0,0 120.142,265 L230.488,265 234.488,261 230.488,257 120.142,257 A6,6 0 0,1 115.899,255.243 L60.828,200.172 Z" fill="#1d667d"/>
+          <path d="M55.17,205.83 110.24,260.9 A14,14 0 0,0 120.14,265 H230.49 L234.49,261 230.49,257 H120.14 A6,6 0 0,1 115.9,255.24 L60.83,200.17 Z" fill="#1d667d"/>
           <g class="link-label" transform="translate(138.23, 261.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">3M</text>
           </g>
         </g>
         <g class="link-segment" data-from="RGR" data-to="URG" fill="#206abc" stroke-width="0">
-          <path d="M435,257 238.488,257 234.488,261 238.488,265 435,265 Z" fill="#1d667d"/>
+          <path d="M435,257 H238.49 L234.49,261 238.49,265 H435 Z" fill="#1d667d"/>
           <g class="link-label" transform="translate(330.74, 261.00)">
-            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.900" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.500"/>
+            <rect class="link-label-box" fill="#ffffff" height="13" opacity="0.9" rx="3" ry="3" stroke="#000000" stroke-width="1" width="28" x="-14" y="-6.5"/>
             <text class="link-label-text" fill="#000000" font-family="monospace" font-size="8" text-anchor="middle" x="0" y="4">1M</text>
           </g>
         </g>
@@ -182,7 +182,7 @@
     </g>
     <g id="nodes">
       <g data-node="AHA" id="N-AHA">
-        <text class="node-label-text" fill="#000000" font-family="sans-serif" font-size="16" text-anchor="end" x="137.346" y="10.522">AHA</text>
+        <text class="node-label-text" fill="#000000" font-family="sans-serif" font-size="16" text-anchor="end" x="137.35" y="10.52">AHA</text>
         <circle class="node" cx="145" cy="29" fill="#ffffff" r="15" stroke="#509ce0" stroke-width="5"/>
       </g>
       <g data-node="ARG" id="N-ARG">
@@ -202,7 +202,7 @@
         <circle class="node" cx="0" cy="203" fill="#ffffff" r="10" stroke="#509ce0" stroke-width="4"/>
       </g>
       <g data-node="OHI" id="N-OHI">
-        <text class="node-label-text" fill="#000000" font-family="sans-serif" font-size="16" text-anchor="start" x="730.358" y="-12.934">OHI</text>
+        <text class="node-label-text" fill="#000000" font-family="sans-serif" font-size="16" text-anchor="start" x="730.36" y="-12.93">OHI</text>
         <circle class="node" cx="725" cy="0" fill="#ffffff" r="10" stroke="#509ce0" stroke-width="4"/>
       </g>
       <g data-node="RGB" id="N-RGB">
@@ -210,11 +210,11 @@
         <circle class="node" cx="406" cy="319" fill="#ffffff" r="10" stroke="#509ce0" stroke-width="4"/>
       </g>
       <g data-node="RGR" id="N-RGR">
-        <text class="node-label-text" fill="#000000" font-family="sans-serif" font-size="16" text-anchor="start" x="440.358" y="248.066">RGR</text>
+        <text class="node-label-text" fill="#000000" font-family="sans-serif" font-size="16" text-anchor="start" x="440.36" y="248.07">RGR</text>
         <circle class="node" cx="435" cy="261" fill="#ffffff" r="10" stroke="#509ce0" stroke-width="4"/>
       </g>
       <g data-node="URG" id="N-URG">
-        <text class="node-label-text" fill="#000000" font-family="sans-serif" font-size="16" text-anchor="end" x="52.642" y="231.934">URG</text>
+        <text class="node-label-text" fill="#000000" font-family="sans-serif" font-size="16" text-anchor="end" x="52.64" y="231.93">URG</text>
         <circle class="node" cx="58" cy="203" fill="#ffffff" r="10" stroke="#509ce0" stroke-width="4"/>
       </g>
     </g>
