@@ -138,15 +138,11 @@ func run() int {
 	c := canvas.NewCanvas()
 	c.Margin = vec.Vec2{X: 10, Y: 10}
 
-	g, err := renderer.RenderTopology(&topo)
+	err := renderer.RenderTopologyToCanvas(&topo, c)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error rendering topology: %s\n", err)
 		return 1
 	}
-
-	c.AppendChild(g)
-
-	renderer.SetStyles(c)
 
 	svgRenderer := canvas.NewSVGRenderer(out)
 	svgRenderer.Indent = 2

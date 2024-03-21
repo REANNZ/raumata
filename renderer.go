@@ -149,6 +149,22 @@ func (r *Renderer) SetScale(s float32) {
 	r.scale = s
 }
 
+// RenderTopologyToCanvas renders the given Topology to the top level of the given
+// This also adds the styles to the canvas.
+func (r *Renderer) RenderTopologyToCanvas(topo *Topology, c *canvas.Canvas) error {
+	g, err := r.RenderTopology(topo)
+	if err != nil {
+		return err
+	}
+
+	c.AppendChild(g)
+	r.SetStyles(c)
+
+	return nil
+}
+
+// RenderTopology renders the given Topology and returns a [canvas.Object] that
+// can be added to a canvas or other object
 func (r *Renderer) RenderTopology(topo *Topology) (canvas.Object, error) {
 	links := make([]*Link, 0, len(topo.Links))
 	nodes := make([]*Node, 0, len(topo.Nodes))
@@ -207,6 +223,7 @@ func (r *Renderer) RenderTopology(topo *Topology) (canvas.Object, error) {
 	return group, nil
 }
 
+// RenderNodes renders a list of nodes and returns a [canvas.Object]
 func (r *Renderer) RenderNodes(nodes []*Node) (canvas.Object, error) {
 	group := canvas.NewGroup()
 	group.Attributes.Id = "nodes"
@@ -224,6 +241,7 @@ func (r *Renderer) RenderNodes(nodes []*Node) (canvas.Object, error) {
 	return group, nil
 }
 
+// RenderLinks renders a list of links and returns a [canvas.Object]
 func (r *Renderer) RenderLinks(links []*Link) (canvas.Object, error) {
 	group := canvas.NewGroup()
 	group.Attributes.Id = "links"
@@ -241,6 +259,7 @@ func (r *Renderer) RenderLinks(links []*Link) (canvas.Object, error) {
 	return group, nil
 }
 
+// RenderNode renders the given Node and returns a [canvas.Object]
 func (r *Renderer) RenderNode(node *Node) (canvas.Object, error) {
 	if node == nil || node.Pos == nil {
 		return nil, nil
@@ -287,6 +306,7 @@ func (r *Renderer) RenderNode(node *Node) (canvas.Object, error) {
 	return nodeGroup, nil
 }
 
+// RenderLink renders the given Link and returns a [canvas.Object]
 func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 	if link == nil || link.Route == nil {
 		return nil, nil
@@ -378,6 +398,7 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 	return linkGroup, nil
 }
 
+// RenderNodeLabel renders the label for the given Node and returns a [canvas.Object]
 func (r *Renderer) RenderNodeLabel(node *Node) (canvas.Object, error) {
 	scale := r.GetScale()
 
@@ -449,6 +470,7 @@ func (r *Renderer) RenderNodeLabel(node *Node) (canvas.Object, error) {
 	return nil, nil
 }
 
+// RenderLinkLabel renders a link label at pos and returns a [canvas.Object]
 func (r *Renderer) RenderLinkLabel(pos vec.Vec2, text string) (canvas.Object, error) {
 
 	size := r.Config.LinkLabelStyle.Size
