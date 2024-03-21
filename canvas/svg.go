@@ -629,19 +629,28 @@ func (s *Style) toCSS(indent int) string {
 		}
 	}
 
+	appendColor := func(style string, color Color) {
+		if color == nil {
+			return
+		}
+		if color.Space() == ColorSpaceHSL {
+			appendStyle(style, color.ToHSL().String())
+		} else {
+			appendStyle(style, color.ToRGB().ToHex())
+		}
+	}
+
 	if s.Opacity.Valid {
 		appendStyle("opacity", s.Opacity.String())
 	}
 
-	if s.FillColor != nil {
-		appendStyle("fill", s.FillColor.ToRGB().ToHex())
-	}
+	appendColor("fill", s.FillColor)
 	if s.FillOpacity.Valid {
 		appendStyle("fill-opacity", s.FillOpacity.String())
 	}
-	if s.StrokeColor != nil {
-		appendStyle("stroke", s.StrokeColor.ToRGB().ToHex())
-	}
+
+	appendColor("stroke", s.StrokeColor)
+
 	if s.StrokeOpacity.Valid {
 		appendStyle("stroke-opacity", s.StrokeOpacity.String())
 	}

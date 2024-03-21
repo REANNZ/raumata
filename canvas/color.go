@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"slices"
 	"strconv"
+	"strings"
 
+	"github.com/REANNZ/raumata/internal"
 	"github.com/REANNZ/raumata/internal/f32"
 )
 
@@ -142,6 +144,8 @@ func (e *ColorParseError) Unwrap() error {
 func ParseColor(s string) (Color, error) {
 	if s[0] == '#' {
 		return ParseHexColor(s)
+	} else if s[:4] == "hsl(" {
+		return ParseHSLColor(s)
 	}
 
 	return nil, &ColorParseError{
@@ -173,8 +177,8 @@ func ParseHexColor(s string) (*RGBColor, error) {
 		s = s[1:]
 	}
 
-	if len(s) < 6 {
-		return nil, makeError(errors.New("too short"))
+	if len(s) != 6 {
+		return nil, makeError(fmt.Errorf("Invalid length: %d (expected 6)", len(s)))
 	}
 
 	var redPart, greenPart, bluePart string
@@ -325,6 +329,84 @@ func HSL(h, s, l float32) *HSLColor {
 	}
 }
 
+// ParseHSLColor parses the given string and returns an HSLColor
+//
+// The accepted formats are:
+//
+//	hsl(hue, sat, light)
+//	hsl(hue, satPC, lightPC)
+//
+// Where *hue* is a number between 0 and 360,
+// *sat* and *light* are numbers between 0 and 1, and
+// *satPC* and *lightPC* are percentage values written as "<val>%"
+//
+// Values outside of the valid ranges will be truncated or normalized
+// as in [HSL]
+func ParseHSLColor(str string) (*HSLColor, error) {
+	input := str
+	makeError := func(e error) error {
+		err := &ColorParseError{
+			Input: input,
+			Err:   e,
+		}
+
+		if numErr, ok := e.(*strconv.NumError); ok {
+			err.Err = fmt.Errorf("'%s' %w", numErr.Num, numErr.Err)
+		}
+
+		return err
+	}
+
+	if str[:4] == "hsl(" {
+		str = str[4 : len(str)-1]
+	} else {
+		return nil, makeError(errors.New("Invalid HSL format"))
+	}
+
+	parts := strings.Split(str, ",")
+	if len(parts) != 3 {
+		return nil, makeError(errors.New("Invalid HSL format"))
+	}
+
+	hueStr := strings.TrimSpace(parts[0])
+	satStr := strings.TrimSpace(parts[1])
+	lightStr := strings.TrimSpace(parts[2])
+
+	hue, err := strconv.ParseFloat(hueStr, 32)
+	if err != nil {
+		return nil, makeError(err)
+	}
+
+	parseMaybePC := func(s string) (float64, error) {
+		if s[len(s)-1] == '%' {
+			val, err := strconv.ParseFloat(s[:len(s)-1], 32)
+			if err != nil {
+				return 0, makeError(err)
+			}
+			return val / 100, nil
+		} else {
+			val, err := strconv.ParseFloat(s, 32)
+			if err != nil {
+				return 0, makeError(err)
+			}
+
+			return val, nil
+		}
+	}
+
+	sat, err := parseMaybePC(satStr)
+	if err != nil {
+		return nil, err
+	}
+
+	light, err := parseMaybePC(lightStr)
+	if err != nil {
+		return nil, err
+	}
+
+	return HSL(float32(hue), float32(sat), float32(light)), nil
+}
+
 func (hsl *HSLColor) Space() ColorSpace { return ColorSpaceHSL }
 
 // Implements the [Color] interface
@@ -369,6 +451,14 @@ func (hsl *HSLColor) ToHSL() *HSLColor {
 func (a *HSLColor) Equal(b *HSLColor) bool {
 	// This needs to be a little more complicated because
 	// multiple points in HSL space map to the same color
+
+	if a == b {
+		return true
+	}
+
+	if a == nil || b == nil {
+		return false
+	}
 
 	// If all the components are equal, then the colors are equal
 	if *a == *b {
@@ -429,8 +519,12 @@ func (a *HSLColor) Interpolate(b *HSLColor, t float32) *HSLColor {
 }
 
 func (hsl *HSLColor) String() string {
-	return fmt.Sprintf("hsl(%.3g, %.3g, %.3g)",
-		hsl.H, hsl.S, hsl.L)
+	hueStr := internal.FormatFloat32(hsl.H, 3)
+	satStr := internal.FormatFloat32(hsl.S*100, 3)
+	lightStr := internal.FormatFloat32(hsl.L*100, 3)
+
+	return fmt.Sprintf("hsl(%s, %s%%, %s%%)",
+		hueStr, satStr, lightStr)
 }
 
 type colorPoint struct {

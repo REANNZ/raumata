@@ -106,6 +106,101 @@ func TestColorEqual(t *testing.T) {
 	}
 }
 
+func TestParseHexColor(t *testing.T) {
+	type testCase struct {
+		s   string
+		exp *RGBColor
+	}
+
+	successCases := []testCase{
+		{
+			s:   "#000000",
+			exp: RGBInt(0x00, 0x00, 0x00),
+		},
+		{
+			s:   "#110011",
+			exp: RGBInt(0x11, 0x00, 0x11),
+		},
+		{
+			s:   "#334455",
+			exp: RGBInt(0x33, 0x44, 0x55),
+		},
+		{
+			s:   "#ffffff",
+			exp: RGBInt(0xff, 0xff, 0xff),
+		},
+		{
+			s:   "#fFfFfF",
+			exp: RGBInt(0xFF, 0xFF, 0xFF),
+		},
+	}
+
+	for _, c := range successCases {
+		actual, err := ParseHexColor(c.s)
+		if err != nil {
+			t.Errorf("Error parsing '%s': %s", c.s, err)
+		} else if !ColorEqual(actual, c.exp) {
+			t.Errorf("Expected '%s', got '%s'", c.exp, actual)
+		}
+	}
+
+	errorCases := []string{"#abc", "#xyzyzz", "#55515551"}
+
+	for _, c := range errorCases {
+		_, err := ParseHexColor(c)
+		if err == nil {
+			t.Errorf("Expected string '%s' to return an error", c)
+		}
+	}
+}
+
+func TestParseHSLColor(t *testing.T) {
+	type testCase struct {
+		s   string
+		exp *HSLColor
+	}
+
+	successCases := []testCase{
+		{
+			s:   "hsl(0, 0, 0)",
+			exp: HSL(0, 0, 0),
+		},
+		{
+			s:   "hsl(0, 0%, 0%)",
+			exp: HSL(0, 0, 0),
+		},
+		{
+			s:   "hsl(0, 100%, 100%)",
+			exp: HSL(0, 1, 1),
+		},
+		{
+			s:   "hsl(0, 1, 1)",
+			exp: HSL(0, 1, 1),
+		},
+		{
+			s:   "hsl(125, 50%, 70%)",
+			exp: HSL(125, 0.5, 0.7),
+		},
+		{
+			s:   "hsl(125, 50%, 0.7)",
+			exp: HSL(125, 0.5, 0.7),
+		},
+		{
+			s:   "hsl(12.5, 0.5, 70%)",
+			exp: HSL(12.5, 0.5, 0.7),
+		},
+	}
+
+	for _, c := range successCases {
+		actual, err := ParseHSLColor(c.s)
+		if err != nil {
+			t.Errorf("Error parsing '%s': %s", c.s, err)
+		} else if !ColorEqual(actual, c.exp) {
+			t.Errorf("Expected '%s', got '%s'", c.exp, actual)
+		}
+	}
+}
+
 // Test the reflection-based unmarshalling code
 
 func TestColorUnmarshal(t *testing.T) {
@@ -324,6 +419,6 @@ func ExampleHSLColor_Interpolate() {
 	fmt.Println(mid)
 
 	// Output:
-	// hsl(90, 0.9, 0.5)
-	// hsl(180, 1, 0.5)
+	// hsl(90, 90%, 50%)
+	// hsl(180, 100%, 50%)
 }
