@@ -288,8 +288,11 @@ func (x *RGBColor) Interpolate(y *RGBColor, t float32) *RGBColor {
 }
 
 func (rgb *RGBColor) String() string {
-	return fmt.Sprintf("rgb(%.3g, %.3g, %.3g)",
-		rgb.R, rgb.G, rgb.B)
+	redStr := internal.FormatFloat32(rgb.R, 3)
+	greenStr := internal.FormatFloat32(rgb.G, 3)
+	blueStr := internal.FormatFloat32(rgb.B, 3)
+	return fmt.Sprintf("rgb(%s, %s, %s)",
+		redStr, greenStr, blueStr)
 }
 
 // Represents a color in the HSL color space.

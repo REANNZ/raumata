@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/REANNZ/raumata/internal"
 	"github.com/REANNZ/raumata/internal/f32"
 	"github.com/REANNZ/raumata/vec"
 )
@@ -154,17 +155,24 @@ func (r *SVGRenderer) RenderGroup(group *Group) error {
 
 		trans, ok := t.GetTranslation()
 		if ok {
-			transformStr = fmt.Sprintf("translate(%.2f, %.2f)", trans.X, trans.Y)
+			xStr := r.formatFloat32(trans.X)
+			yStr := r.formatFloat32(trans.Y)
+			transformStr = fmt.Sprintf("translate(%s, %s)", xStr, yStr)
 		}
 		rot, ok := t.GetRotation()
 		if ok {
-			transformStr = fmt.Sprintf("rotate(%.2f)", rot)
+			transformStr = fmt.Sprintf("rotate(%s)", r.formatFloat32(rot))
 		}
 
 		if transformStr == "" {
 			// Fallback to the matrix form
-			transformStr = fmt.Sprintf("matrix(%.2f,%.2f,%.2f,%.2f,%.2f,%.2f)",
-				t.A, t.B, t.C, t.D, t.E, t.F)
+			transformStr = fmt.Sprintf("matrix(%s,%s,%s,%s,%s,%s)",
+				r.formatFloat32(t.A),
+				r.formatFloat32(t.B),
+				r.formatFloat32(t.C),
+				r.formatFloat32(t.D),
+				r.formatFloat32(t.E),
+				r.formatFloat32(t.F))
 		}
 
 		attrs["transform"] = transformStr
@@ -231,7 +239,9 @@ func (r *SVGRenderer) RenderPolygon(polygon *Polygon) error {
 
 	points := ""
 	for _, p := range polygon.Points {
-		points += fmt.Sprintf("%.2f, %.2f ", p.X, p.Y)
+		xStr := r.formatFloat32(p.X)
+		yStr := r.formatFloat32(p.Y)
+		points += fmt.Sprintf("%s, %s ", xStr, yStr)
 	}
 
 	attrs["points"] = points
@@ -481,18 +491,7 @@ func (r *SVGRenderer) newline() error {
 }
 
 func (r *SVGRenderer) formatFloat32(f float32) string {
-	prec := r.Precision
-	if f == f32.Round(f) {
-		prec = 0
-	}
-	s := strconv.FormatFloat(float64(f), 'f', prec, 32)
-	if prec > 0 {
-		s = strings.TrimRight(s, ".0")
-	}
-	if s == "" {
-		return "0"
-	}
-	return s
+	return internal.FormatFloat32(f, r.Precision)
 }
 
 func (r *SVGRenderer) convertAttributeMap(attrs map[string]any) map[string]string {
