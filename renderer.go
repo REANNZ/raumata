@@ -507,11 +507,11 @@ func (r *Renderer) RenderLinkLabel(pos vec.Vec2, text string) (canvas.Object, er
 //
 // The following classes are created in the canvas:
 //
-// * "node" - Styles that apply to all nodes
-// * "link-segment" - Styles that apply to all link segments
-// * "node-label-text" - Styles that apply to all node labels
-// * "link-label-text" - Styles that apply to all link labels
-// * "link-label-box" - Styles that apply to all link labels
+//	- "node" - Styles that apply to all nodes
+//	- "link-segment" - Styles that apply to all link segments
+//	- "node-label-text" - Styles that apply to all node labels
+//	- "link-label-text" - Styles that apply to all link labels
+//	- "link-label-box" - Styles that apply to all link labels
 func (r *Renderer) SetStyles(c *canvas.Canvas) {
 	c.Stylesheet.AddRule(canvas.Selector{"node"}, r.Config.DefaultNodeStyle.Style)
 	for cls, style := range r.Config.NodeStyles {

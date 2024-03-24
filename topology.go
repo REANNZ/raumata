@@ -22,6 +22,11 @@ type Node struct {
 	Style   *NodeStyle `json:"style,omitempty"`
 }
 
+// Link represents a link between two nodes.
+//
+// While the ends are labeled "to" and "from", links
+// are expected to be bi-directional, the naming is
+// simply for convenience.
 type Link struct {
 	Id       LinkId       `json:"id"`
 	From     NodeId       `json:"from"`
@@ -74,7 +79,7 @@ func (id LinkId) String() string {
 // object with { "id": <node/link> } fields.
 //
 // Node ids are automatically set if the object format used, otherwise
-// the must be both present and unique.
+// they must be both present and unique.
 //
 // Link ids, if not provided, are determined automatically from the
 // "from" and "to" fields of the link.
