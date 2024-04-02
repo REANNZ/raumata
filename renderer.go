@@ -347,7 +347,7 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 	renderLinkSegment := func(route vec.Polyline, data *LinkData, from, to string) (canvas.Object, error) {
 		var color canvas.Color = style.FillColor
 		if data != nil && data.Value.Valid {
-			color = r.Config.LinkColorScale.GetColor(link.FromData.Value.Value)
+			color = r.Config.LinkColorScale.GetColor(data.Value.Value)
 		}
 		path := renderArrow(route, style.Size, style.Radius.Value)
 		if path == nil {
