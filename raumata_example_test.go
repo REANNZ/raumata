@@ -14,7 +14,7 @@ func Example() {
 	networkTopology := &raumata.Topology{
 		Nodes: map[raumata.NodeId]*raumata.Node{
 			"ruru": {
-				Id: "ruru",
+				Id:  "ruru",
 				Pos: &[2]int16{0, 0},
 			},
 			"kea": {
