@@ -19,7 +19,14 @@ func (c *Canvas) GetAABB() *AABB {
 	if c == nil {
 		return nil
 	}
-	return GetCombinedAABB(c.Children)
+	aabb := GetCombinedAABB(c.Children)
+	min, max := aabb.Bounds()
+
+	// Add the margin to the AABB
+	min = min.Sub(c.Margin)
+	max = max.Add(c.Margin)
+
+	return NewAABB(min, max)
 }
 
 // Render the canvas using the given renderer

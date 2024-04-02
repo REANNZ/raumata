@@ -31,17 +31,16 @@ const (
 // The size of the image is determined by the width and height
 // of the canvas and the Width and Height fields.
 type SVGRenderer struct {
-	Indent         int            // Controls the size of the indent
-	Width          int            // The width of the image, <= 0 means automatic
-	Height         int            // The height of the image, <= 0 means automatic
-	IncludeHeader  bool           // Include an XML header, set to false if embedding the file in another document
-	StyleMode      SVGStyleMode   // Mode to use for rendering styles, defaults to SVGStyleNone
-	Precision      int            // Controls the precision used for printing floats
-	RootAttributes map[string]any // Attributes for the root svg element
-	f              io.Writer
-	level          int
-	currentStyle   *Style
-	canvas         *Canvas
+	Indent        int          // Controls the size of the indent
+	Width         int          // The width of the image, <= 0 means automatic
+	Height        int          // The height of the image, <= 0 means automatic
+	IncludeHeader bool         // Include an XML header, set to false if embedding the file in another document
+	StyleMode     SVGStyleMode // Mode to use for rendering styles, defaults to SVGStyleNone
+	Precision     int          // Controls the precision used for printing floats
+	f             io.Writer
+	level         int
+	currentStyle  *Style
+	canvas        *Canvas
 }
 
 // NewSVGRenderer returns a new renderer that writes an SVG to f
@@ -51,14 +50,22 @@ func NewSVGRenderer(f io.Writer) *SVGRenderer {
 		level:        0,
 		currentStyle: NewStyle(),
 
-		IncludeHeader:  true,
-		Precision:      2,
-		RootAttributes: make(map[string]any),
+		IncludeHeader: true,
+		Precision:     2,
 	}
 }
 
 func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
-	if r.IncludeHeader {
+
+	// Store and restore the canvas on the way down
+	prevCanvas := r.canvas
+	r.canvas = canvas
+	defer func() {
+		r.canvas = prevCanvas
+	}()
+
+	// Only output the header for the top-level canvas
+	if r.level == 0 && r.IncludeHeader {
 		_, err := io.WriteString(r.f, `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">`)
 		if err != nil {
@@ -66,11 +73,7 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 		}
 	}
 
-	r.canvas = canvas
-
-	attrs := r.convertAttributeMap(r.RootAttributes)
-
-	attrs["xmlns"] = "http://www.w3.org/2000/svg"
+	attrs := r.convertAttributes(&canvas.Attributes)
 
 	aabb := canvas.GetAABB()
 
@@ -78,15 +81,25 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 
 	// Calculate the viewbox, which is the coordinate system
 	// used by the elements in the the image
-	min = min.Sub(canvas.Margin)
-	max = max.Add(canvas.Margin)
 	size := max.Sub(min)
-
 	viewBox := fmt.Sprintf("%s %s %s %s",
 		r.formatFloat32(min.X),
 		r.formatFloat32(min.Y),
 		r.formatFloat32(size.X),
 		r.formatFloat32(size.Y))
+
+	attrs["viewBox"] = viewBox
+
+	if r.level == 0 {
+		// Only put the xmlns attribute on the top-level element
+		attrs["xmlns"] = "http://www.w3.org/2000/svg"
+	} else {
+		// If it's an embedded canvas, set the x and y values
+		// to the min of the bounding box, otherwise the position
+		// defaults to (0, 0) and things get clipped incorrectly
+		attrs["x"] = r.formatFloat32(min.X)
+		attrs["y"] = r.formatFloat32(min.Y)
+	}
 
 	// Calculate the image's width and height
 	var width, height int
@@ -115,7 +128,6 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 
 	attrs["width"] = fmt.Sprintf("%dpx", width)
 	attrs["height"] = fmt.Sprintf("%dpx", height)
-	attrs["viewBox"] = viewBox
 
 	// Start rendering
 	if r.StyleMode != SVGStyleInternal || !canvas.Stylesheet.HasRules() {
