@@ -417,6 +417,12 @@ func (r *SVGRenderer) RenderCDATA(data string) error {
 	return err
 }
 
+// Renders a string inside an XML comment
+func (r *SVGRenderer) RenderComment(text string) error {
+	_, err := fmt.Fprintf(r.f, "<!-- %s -->", text)
+	return err
+}
+
 func (r *SVGRenderer) writeOpenElement(name string, attrs map[string]string, selfClose bool) error {
 	if err := r.newline(); err != nil {
 		return err
@@ -539,9 +545,9 @@ func (r *SVGRenderer) convertAttributeMap(attrs map[string]any) map[string]strin
 				out[attr] = "false"
 			}
 		case float32:
-			out[attr] = strconv.FormatFloat(float64(val), 'f', r.Precision, 64)
+			out[attr] = r.formatFloat32(val)
 		case float64:
-			out[attr] = strconv.FormatFloat(val, 'f', r.Precision, 64)
+			out[attr] = internal.FormatFloat(val, r.Precision, 64)
 		case string:
 			out[attr] = val
 		case []string:
@@ -599,8 +605,8 @@ func (r *SVGRenderer) convertAttributes(attrs *Attributes) map[string]string {
 			color := style.FillColor.ToRGB().ToHex()
 			out["fill"] = color
 		}
-		if style.StrokeOpacity.Valid {
-			out["stroke-opacity"] = r.formatFloat32(style.StrokeOpacity.Value)
+		if style.FillOpacity.Valid {
+			out["fill-opacity"] = r.formatFloat32(style.FillOpacity.Value)
 		}
 		if style.StrokeColor != nil {
 			color := style.StrokeColor.ToRGB().ToHex()
