@@ -91,8 +91,9 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 	attrs["viewBox"] = viewBox
 
 	if r.level == 0 {
-		// Only put the xmlns attribute on the top-level element
+		// Only put the xmlns attributes on the top-level element
 		attrs["xmlns"] = "http://www.w3.org/2000/svg"
+		attrs["xmlns:xlink"] = "http://www.w3.org/1999/xlink"
 	} else {
 		// If it's an embedded canvas, set the x and y values
 		// to the min of the bounding box, otherwise the position
@@ -401,6 +402,18 @@ func (r *SVGRenderer) writeStylesheet(stylesheet Stylesheet) error {
 		return err
 	}
 	_, err := io.WriteString(r.f, "</defs>")
+	return err
+}
+
+// Renders an arbitrary element to the document
+func (r *SVGRenderer) RenderElement(name string, attrs map[string]any, children []Object, style *Style) error {
+	stringAttrs := r.convertAttributeMap(attrs)
+	return r.writeElement(name, stringAttrs, children, style)
+}
+
+// Renders a string as a CDATA element
+func (r *SVGRenderer) RenderCDATA(data string) error {
+	_, err := fmt.Fprintf(r.f, "<![CDATA[\n%s\n]]>", data)
 	return err
 }
 
