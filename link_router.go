@@ -734,6 +734,55 @@ func (f *routeFinder) weight(fromNode, toNode gridNode) float32 {
 				}
 			}
 		}
+
+		// Apply a penalty for being adjacent to other links,
+		// this is to try and spread out links radially at the
+		// start and end nodes since otherwise they can bunch
+		// up weird ways.
+		addPenalty := func(at internal.GridPos) {
+			links := f.router.linkMap[at]
+			// Start the penalty fairly low, since we really
+			// just want to pick between otherwise-equal paths
+			var n float32 = 8
+			for _, l := range links {
+				if l != f.linkId {
+					linkPenalty += 1 / n
+					n *= 2
+				}
+			}
+		}
+
+		// Check to the left and right of the "to" node,
+		// (relative to the direction the route is heading)
+		// for neighbours.
+		if toNode.dirX == 0 {
+			n := to
+			n.Y += toNode.dirY
+			n.X += 1
+			addPenalty(n)
+			n = to
+			n.Y += toNode.dirY
+			n.X -= 1
+			addPenalty(n)
+		} else if toNode.dirY != 0 {
+			n := to
+			n.Y += toNode.dirY
+			addPenalty(n)
+		}
+		if toNode.dirY == 0 {
+			n := to
+			n.X += toNode.dirX
+			n.Y += 1
+			addPenalty(n)
+			n = to
+			n.X += toNode.dirX
+			n.Y -= 1
+			addPenalty(n)
+		} else if toNode.dirX != 0 {
+			n := to
+			n.X += toNode.dirX
+			addPenalty(n)
+		}
 	}
 
 	weight := dist + (linkPenalty * f.router.linkPenaltyWeight)
