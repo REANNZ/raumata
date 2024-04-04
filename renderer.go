@@ -639,6 +639,9 @@ func (r *Renderer) getNodeStyle(node *Node) *NodeStyle {
 }
 
 func (s *NodeStyle) merge(other *NodeStyle) {
+	if s.Style == nil {
+		s.Style = canvas.NewStyle()
+	}
 	s.Style.Merge(other.Style)
 	if s.Size == 0 {
 		s.Size = other.Size
@@ -647,6 +650,9 @@ func (s *NodeStyle) merge(other *NodeStyle) {
 
 func (s *LinkStyle) merge(other *LinkStyle) {
 	s.Style.Merge(other.Style)
+	if s.Style == nil {
+		s.Style = canvas.NewStyle()
+	}
 	if s.Size == 0 {
 		s.Size = other.Size
 	}
