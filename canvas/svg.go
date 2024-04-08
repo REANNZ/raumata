@@ -35,6 +35,7 @@ type SVGRenderer struct {
 	Width         int          // The width of the image, <= 0 means automatic
 	Height        int          // The height of the image, <= 0 means automatic
 	IncludeHeader bool         // Include an XML header, set to false if embedding the file in another document
+	IncludeSize   bool
 	StyleMode     SVGStyleMode // Mode to use for rendering styles, defaults to SVGStyleNone
 	Precision     int          // Controls the precision used for printing floats
 	f             io.Writer
@@ -51,6 +52,7 @@ func NewSVGRenderer(f io.Writer) *SVGRenderer {
 		currentStyle: NewStyle(),
 
 		IncludeHeader: true,
+		IncludeSize:   true,
 		Precision:     2,
 	}
 }
@@ -103,32 +105,34 @@ func (r *SVGRenderer) RenderCanvas(canvas *Canvas) error {
 	}
 
 	// Calculate the image's width and height
-	var width, height int
-	if r.Width <= 0 && r.Height > 0 {
-		h := float32(r.Height)
-		w := (h / size.Y) * size.X
-		height = r.Height
-		width = int(f32.Round(w))
-	}
-	if r.Height <= 0 && r.Width > 0 {
-		w := float32(r.Width)
-		h := (w / size.X) * size.Y
-		width = r.Width
-		height = int(f32.Round(h))
-	}
+	if r.level > 0 || r.IncludeSize {
+		var width, height int
+		if r.Width <= 0 && r.Height > 0 {
+			h := float32(r.Height)
+			w := (h / size.Y) * size.X
+			height = r.Height
+			width = int(f32.Round(w))
+		}
+		if r.Height <= 0 && r.Width > 0 {
+			w := float32(r.Width)
+			h := (w / size.X) * size.Y
+			width = r.Width
+			height = int(f32.Round(h))
+		}
 
-	if r.Width > 0 && r.Height > 0 {
-		width = r.Width
-		height = r.Height
-	}
+		if r.Width > 0 && r.Height > 0 {
+			width = r.Width
+			height = r.Height
+		}
 
-	if width == 0 && height == 0 {
-		width = int(f32.Round(size.X))
-		height = int(f32.Round(size.Y))
-	}
+		if width == 0 && height == 0 {
+			width = int(f32.Round(size.X))
+			height = int(f32.Round(size.Y))
+		}
 
-	attrs["width"] = fmt.Sprintf("%dpx", width)
-	attrs["height"] = fmt.Sprintf("%dpx", height)
+		attrs["width"] = fmt.Sprintf("%dpx", width)
+		attrs["height"] = fmt.Sprintf("%dpx", height)
+	}
 
 	// Start rendering
 	if r.StyleMode != SVGStyleInternal || !canvas.Stylesheet.HasRules() {
