@@ -743,7 +743,7 @@ func (f *routeFinder) weight(fromNode, toNode gridNode) float32 {
 			links := f.router.linkMap[at]
 			// Start the penalty fairly low, since we really
 			// just want to pick between otherwise-equal paths
-			var n float32 = 8
+			var n float32 = 16
 			for _, l := range links {
 				if l != f.linkId {
 					linkPenalty += 1 / n
