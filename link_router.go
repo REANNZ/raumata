@@ -213,7 +213,7 @@ func (r *LinkRouter) RouteLinks() {
 	// Sort the routes by their weight. Since the results of the
 	// next pass is dependent on the order we route the links,
 	// sorting them makes the output consistent between invocations.
-	slices.SortFunc(routes, func(a, b *route) int {
+	slices.SortStableFunc(routes, func(a, b *route) int {
 		d := a.weight - b.weight
 		if d < 0 {
 			return -1
@@ -242,7 +242,7 @@ func (r *LinkRouter) RouteLinks() {
 	// Sort again, this favours improving short links
 	// over long ones, which works because short links
 	// tend to have less flexibility in possible routes
-	slices.SortFunc(newRoutes, func(a, b *route) int {
+	slices.SortStableFunc(newRoutes, func(a, b *route) int {
 		d := a.weight - b.weight
 		if d < 0 {
 			return -1
