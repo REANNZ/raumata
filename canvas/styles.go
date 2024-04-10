@@ -2,10 +2,102 @@ package canvas
 
 import (
 	"encoding/json"
+	"fmt"
 	"slices"
 
 	"github.com/REANNZ/raumata/option"
 )
+
+type StyleColor struct {
+	isNone bool
+	color  Color
+}
+
+var StyleColorNone StyleColor = StyleColor{isNone: true}
+
+func NewStyleColor(color Color) StyleColor {
+	if color == nil {
+		return StyleColorNone
+	}
+
+	return StyleColor{
+		color: color,
+	}
+}
+
+func (c *StyleColor) Color() Color {
+	return c.color
+}
+
+func (c *StyleColor) SetColor(color Color) {
+	c.color = color
+	c.isNone = false
+}
+
+func (c *StyleColor) IsNone() bool {
+	return c.isNone
+}
+
+func (c *StyleColor) SetNone() {
+	c.color = nil
+	c.isNone = true
+}
+
+func (c *StyleColor) IsZero() bool {
+	return c.color == nil && !c.isNone
+}
+
+func (c *StyleColor) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		c.color = nil
+		c.isNone = false
+		return nil
+	}
+
+	var s string
+	err := json.Unmarshal(data, &s)
+	if err != nil {
+		return err
+	}
+
+	if s == "none" {
+		c.isNone = true
+		c.color = nil
+		return nil
+	}
+
+	color, err := ParseColor(s)
+	if err != nil {
+		return err
+	}
+	if color != nil {
+		c.isNone = false
+		c.color = color
+	}
+
+	return nil
+}
+
+func (c *StyleColor) String() string {
+	if c.isNone {
+		return "none"
+	}
+
+	switch s := c.color.(type) {
+	case fmt.Stringer:
+		return s.String()
+	}
+
+	return c.color.ToRGB().String()
+}
+
+func mergeStyleColor(a, b StyleColor) StyleColor {
+	if a.color == nil && !a.isNone {
+		return b
+	}
+
+	return a
+}
 
 // Stores style information for an element
 type Style struct {
@@ -13,11 +105,11 @@ type Style struct {
 	Opacity option.Float32 `json:"opacity,omitempty"`
 
 	// The color used to fill the object
-	FillColor Color `json:"fill,omitempty"`
+	FillColor StyleColor `json:"fill,omitempty"`
 	// The opacity of the fill
 	FillOpacity option.Float32 `json:"fill-opacity,omitempty"`
 	// The color used to paint the stroke/outline of the object
-	StrokeColor Color `json:"stroke,omitempty"`
+	StrokeColor StyleColor `json:"stroke,omitempty"`
 	// The opacity of the stroke/outline
 	StrokeOpacity option.Float32 `json:"stroke-opacity,omitempty"`
 	// The width of the stroke/outline
@@ -39,15 +131,14 @@ func (s *Style) Merge(other *Style) {
 	if !s.Opacity.Valid {
 		s.Opacity = other.Opacity
 	}
-	if s.FillColor == nil {
-		s.FillColor = other.FillColor
-	}
+
+	s.FillColor = mergeStyleColor(s.FillColor, other.FillColor)
+
 	if !s.FillOpacity.Valid {
 		s.FillOpacity = other.FillOpacity
 	}
-	if s.StrokeColor == nil {
-		s.StrokeColor = other.StrokeColor
-	}
+
+	s.StrokeColor = mergeStyleColor(s.StrokeColor, other.StrokeColor)
 	if !s.StrokeOpacity.Valid {
 		s.StrokeOpacity = other.StrokeOpacity
 	}
@@ -64,32 +155,26 @@ func (s *Style) Merge(other *Style) {
 func (s *Style) Changed(other *Style) *Style {
 	newStyle := NewStyle()
 
+	colorChanged := func(a, b StyleColor) StyleColor {
+		if a.isNone != b.isNone {
+			return b
+		}
+		if !ColorEqual(a.color, b.color) {
+			return b
+		}
+		return StyleColor{}
+	}
+
 	if s.Opacity != other.Opacity {
 		newStyle.Opacity = other.Opacity
 	}
-	if s.FillColor == nil && other.FillColor != nil {
-		newStyle.FillColor = other.FillColor
-	} else if other.FillColor != nil {
-		color := s.FillColor
-		otherColor := other.FillColor
 
-		if !ColorEqual(color, otherColor) {
-			newStyle.FillColor = other.FillColor
-		}
-	}
+	newStyle.FillColor = colorChanged(s.FillColor, other.FillColor)
 	if s.FillOpacity != other.FillOpacity {
 		newStyle.FillOpacity = other.FillOpacity
 	}
-	if s.StrokeColor == nil && other.StrokeColor != nil {
-		newStyle.StrokeColor = other.StrokeColor
-	} else if other.StrokeColor != nil {
-		color := s.StrokeColor
-		otherColor := other.StrokeColor
 
-		if !ColorEqual(color, otherColor) {
-			newStyle.StrokeColor = other.StrokeColor
-		}
-	}
+	newStyle.StrokeColor = colorChanged(s.StrokeColor, other.StrokeColor)
 	if s.StrokeOpacity != other.StrokeOpacity {
 		newStyle.StrokeOpacity = other.StrokeOpacity
 	}

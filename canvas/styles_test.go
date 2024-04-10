@@ -9,13 +9,27 @@ import (
 func checkStyleEq(t *testing.T, expected, actual *Style) {
 	t.Helper()
 
-	if !ColorEqual(expected.FillColor, actual.FillColor) {
-		t.Errorf("FillColor not correct, expected %s, got %s",
-			expected.FillColor, actual.FillColor)
+	styleColorEqual := func(a, b StyleColor) bool {
+		if a == b {
+			return true
+		}
+
+		if a.IsNone() != b.IsNone() {
+			return false
+		} else if a.IsNone() && b.IsNone() {
+			return true
+		}
+
+		return ColorEqual(a.Color(), b.Color())
 	}
-	if !ColorEqual(expected.StrokeColor, actual.StrokeColor) {
+
+	if !styleColorEqual(expected.FillColor, actual.FillColor) {
+		t.Errorf("FillColor not correct, expected %s, got %s",
+			&expected.FillColor, &actual.FillColor)
+	}
+	if !styleColorEqual(expected.StrokeColor, actual.StrokeColor) {
 		t.Errorf("StrokeColor not correct, expected %s, got %s",
-			expected.StrokeColor, actual.StrokeColor)
+			&expected.StrokeColor, &actual.StrokeColor)
 	}
 
 	if actual.Opacity != expected.Opacity {
@@ -43,8 +57,8 @@ func TestStyleChanged(t *testing.T) {
 	blank := NewStyle()
 
 	s := NewStyle()
-	s.FillColor = RGB(0, 0, 0)
-	s.StrokeColor = RGB(0, 0, 0)
+	s.FillColor.SetColor(RGB(0, 0, 0))
+	s.StrokeColor.SetColor(RGB(0, 0, 0))
 	s.Opacity.Set(1)
 	s.StrokeWidth.Set(1)
 	s.StrokeOpacity.Set(1)
@@ -55,14 +69,13 @@ func TestStyleChanged(t *testing.T) {
 	checkStyleEq(t, s, changed)
 
 	s2 := NewStyle()
-	s2.FillColor = RGB(1, 0, 1)
-	s2.StrokeColor = RGB(0, 0, 0)
+	s2.FillColor.SetColor(RGB(1, 0, 1))
+	s2.StrokeColor.SetColor(RGB(0, 0, 0))
 	s2.StrokeWidth.Set(0)
 	s2.StrokeOpacity.Set(1)
 
 	expected := NewStyle()
-	expected.FillColor = RGB(1, 0, 1)
-	expected.StrokeColor = nil
+	expected.FillColor.SetColor(RGB(1, 0, 1))
 	expected.StrokeWidth.Set(0)
 
 	changed = s.Changed(s2)
@@ -106,11 +119,11 @@ func TestStylesheet(t *testing.T) {
 	stylesheet := Stylesheet{}
 
 	a := NewStyle()
-	a.FillColor = RGB(1, 0, 0)
+	a.FillColor = NewStyleColor(RGB(1, 0, 0))
 	stylesheet.AddRule(Selector{"a"}, a)
 
 	b := NewStyle()
-	b.StrokeColor = RGB(0, 1, 0)
+	b.StrokeColor = NewStyleColor(RGB(0, 1, 0))
 	stylesheet.AddRule(Selector{"b"}, b)
 
 	c := NewStyle()
@@ -156,8 +169,8 @@ func TestStylesheet(t *testing.T) {
 	}
 
 	expectedStyle := NewStyle()
-	expectedStyle.FillColor = RGB(1, 0, 0)
-	expectedStyle.StrokeColor = RGB(0, 1, 0)
+	expectedStyle.FillColor.SetColor(RGB(1, 0, 0))
+	expectedStyle.StrokeColor.SetColor(RGB(0, 1, 0))
 	expectedStyle.Opacity.Set(0.5)
 	style := stylesheet.GetStyle([]string{"a", "b", "c"})
 

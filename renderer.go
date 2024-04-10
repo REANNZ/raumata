@@ -60,8 +60,8 @@ func DefaultRenderConfig() *RenderConfig {
 			Size: 20,
 			Style: &canvas.Style{
 				StrokeWidth: option.Float32{},
-				StrokeColor: canvas.RGB(0, 0, 0),
-				FillColor:   canvas.RGB(1, 1, 1),
+				StrokeColor: canvas.NewStyleColor(canvas.RGB(0, 0, 0)),
+				FillColor:   canvas.NewStyleColor(canvas.RGB(1, 1, 1)),
 			},
 		},
 		DefaultLinkStyle: LinkStyle{
@@ -69,7 +69,7 @@ func DefaultRenderConfig() *RenderConfig {
 			Radius: option.Float32{},
 			Style: &canvas.Style{
 				StrokeWidth: option.Float32{},
-				FillColor:   canvas.RGB(0.5, 0.5, 0.5),
+				FillColor:   canvas.NewStyleColor(canvas.RGB(0.5, 0.5, 0.5)),
 			},
 		},
 		LinkColorScale: canvas.HeatColorScale(),
@@ -345,16 +345,16 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 
 	// Helper function for rendering the individual link parts
 	renderLinkSegment := func(route vec.Polyline, data *LinkData, from, to string) (canvas.Object, error) {
-		var color canvas.Color = style.FillColor
+		var color canvas.StyleColor = style.FillColor
 		if data != nil && data.Value.Valid {
-			color = r.Config.LinkColorScale.GetColor(data.Value.Value)
+			color.SetColor(r.Config.LinkColorScale.GetColor(data.Value.Value))
 		}
 		path := renderArrow(route, style.Size, style.Radius.Value)
 		if path == nil {
 			return nil, nil
 		}
 
-		if color != nil {
+		if !color.IsZero() {
 			path.Attributes.EnsureStyle()
 			path.Attributes.Style.FillColor = color
 		}
@@ -525,18 +525,18 @@ func (r *Renderer) SetStyles(c *canvas.Canvas) {
 	}
 
 	nodeLabelStyle := canvas.NewStyle()
-	nodeLabelStyle.FillColor = r.Config.NodeLabelStyle.Color
+	nodeLabelStyle.FillColor.SetColor(r.Config.NodeLabelStyle.Color)
 	nodeLabelStyle.FontFamily = r.Config.NodeLabelStyle.FontFamily
 	c.Stylesheet.AddRule(canvas.Selector{"node-label-text"}, nodeLabelStyle)
 
 	linkLabelTextStyle := canvas.NewStyle()
-	linkLabelTextStyle.FillColor = r.Config.LinkLabelStyle.Color
+	linkLabelTextStyle.FillColor.SetColor(r.Config.LinkLabelStyle.Color)
 	linkLabelTextStyle.FontFamily = r.Config.LinkLabelStyle.FontFamily
 	c.Stylesheet.AddRule(canvas.Selector{"link-label-text"}, linkLabelTextStyle)
 
 	linkLabelBoxStyle := canvas.NewStyle()
-	linkLabelBoxStyle.FillColor = r.Config.LinkLabelStyle.Background
-	linkLabelBoxStyle.StrokeColor = r.Config.LinkLabelStyle.Border
+	linkLabelBoxStyle.FillColor.SetColor(r.Config.LinkLabelStyle.Background)
+	linkLabelBoxStyle.StrokeColor.SetColor(r.Config.LinkLabelStyle.Border)
 	linkLabelBoxStyle.Opacity.Set(r.Config.LinkLabelStyle.Opacity)
 	linkLabelBoxStyle.StrokeWidth.Set(1)
 	c.Stylesheet.AddRule(canvas.Selector{"link-label-box"}, linkLabelBoxStyle)

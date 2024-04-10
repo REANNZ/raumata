@@ -31,10 +31,10 @@ const (
 // The size of the image is determined by the width and height
 // of the canvas and the Width and Height fields.
 type SVGRenderer struct {
-	Indent        int          // Controls the size of the indent
-	Width         int          // The width of the image, <= 0 means automatic
-	Height        int          // The height of the image, <= 0 means automatic
-	IncludeHeader bool         // Include an XML header, set to false if embedding the file in another document
+	Indent        int  // Controls the size of the indent
+	Width         int  // The width of the image, <= 0 means automatic
+	Height        int  // The height of the image, <= 0 means automatic
+	IncludeHeader bool // Include an XML header, set to false if embedding the file in another document
 	IncludeSize   bool
 	StyleMode     SVGStyleMode // Mode to use for rendering styles, defaults to SVGStyleNone
 	Precision     int          // Controls the precision used for printing floats
@@ -563,6 +563,16 @@ func (r *SVGRenderer) convertAttributeMap(attrs map[string]any) map[string]strin
 				list += s
 			}
 			out[attr] = list
+		case StyleColor:
+			color := r.convertStyleColor(val)
+			if color != "" {
+				out[attr] = color
+			}
+		case *StyleColor:
+			color := r.convertStyleColor(*val)
+			if color != "" {
+				out[attr] = color
+			}
 		case Color:
 			out[attr] = val.ToRGB().ToHex()
 		case fmt.Stringer:
@@ -571,6 +581,18 @@ func (r *SVGRenderer) convertAttributeMap(attrs map[string]any) map[string]strin
 	}
 
 	return out
+}
+
+func (r *SVGRenderer) convertStyleColor(color StyleColor) string {
+	if color.IsZero() {
+		return ""
+	}
+
+	if color.IsNone() {
+		return "none"
+	}
+
+	return color.Color().ToRGB().ToHex()
 }
 
 // Converts attributes into a map[string]string.
@@ -605,15 +627,17 @@ func (r *SVGRenderer) convertAttributes(attrs *Attributes) map[string]string {
 		if style.Opacity.Valid {
 			out["opacity"] = r.formatFloat32(style.Opacity.Value)
 		}
-		if style.FillColor != nil {
-			color := style.FillColor.ToRGB().ToHex()
+
+		color := r.convertStyleColor(style.FillColor)
+		if color != "" {
 			out["fill"] = color
 		}
 		if style.FillOpacity.Valid {
 			out["fill-opacity"] = r.formatFloat32(style.FillOpacity.Value)
 		}
-		if style.StrokeColor != nil {
-			color := style.StrokeColor.ToRGB().ToHex()
+
+		color = r.convertStyleColor(style.StrokeColor)
+		if color != "" {
 			out["stroke"] = color
 		}
 		if style.StrokeOpacity.Valid {
@@ -663,14 +687,19 @@ func (s *Style) toCSS(indent int) string {
 		}
 	}
 
-	appendColor := func(style string, color Color) {
-		if color == nil {
+	appendColor := func(style string, color StyleColor) {
+		if color.IsZero() {
 			return
 		}
-		if color.Space() == ColorSpaceHSL {
-			appendStyle(style, color.ToHSL().String())
+		if color.IsNone() {
+			appendStyle(style, "none")
+			return
+		}
+		c := color.Color()
+		if c.Space() == ColorSpaceHSL {
+			appendStyle(style, c.ToHSL().String())
 		} else {
-			appendStyle(style, color.ToRGB().ToHex())
+			appendStyle(style, c.ToRGB().ToHex())
 		}
 	}
 
