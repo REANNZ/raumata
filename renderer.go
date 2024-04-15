@@ -390,6 +390,11 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 		return nil, err
 	}
 
+	if link.Class != "" {
+		linkSegA.GetAttributes().AddClass(link.Class)
+		linkSegB.GetAttributes().AddClass(link.Class)
+	}
+
 	linkGroup.AppendChild(linkSegA)
 	linkGroup.AppendChild(linkSegB)
 
@@ -520,7 +525,7 @@ func (r *Renderer) SetStyles(c *canvas.Canvas) {
 	}
 	c.Stylesheet.AddRule(canvas.Selector{"link-segment"}, r.Config.DefaultLinkStyle.Style)
 	for cls, style := range r.Config.LinkStyles {
-		sel := canvas.Selector{"link", cls}
+		sel := canvas.Selector{"link-segment", cls}
 		c.Stylesheet.AddRule(sel, style.Style)
 	}
 
