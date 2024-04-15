@@ -189,23 +189,6 @@ func (s *Style) Changed(other *Style) *Style {
 	return newStyle
 }
 
-func (s *Style) UnmarshalJSON(data []byte) error {
-	if s == nil {
-		return nil
-	}
-
-	newStyle := Style{}
-	if err := UnmarshalColorStruct(data, &newStyle); err != nil {
-		return err
-	}
-
-	newStyle.Merge(s)
-
-	*s = newStyle
-
-	return nil
-}
-
 func (s *Style) MarshalJSON() ([]byte, error) {
 	// `omitempty` doesn't work on struct types, meaning it includes
 	// the option.Float32 values in the output as nulls. This isn't

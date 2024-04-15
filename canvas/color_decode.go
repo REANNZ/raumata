@@ -44,6 +44,10 @@ func UnmarshalColorStruct(data []byte, val any) error {
 	// Convert the type into a "safe" version
 	safeTy := makeDecodableType(v.Type())
 
+	if safeTy == v.Type() {
+		return fmt.Errorf("Converting %s may result in loop!", safeTy)
+	}
+
 	// Construct an instance of the new type
 	safeVal := reflect.New(safeTy)
 

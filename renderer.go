@@ -843,22 +843,6 @@ func findSplit(route vec.Polyline, startPos float32, splitTolerance float32) (ve
 	return route1, route2
 }
 
-// Implement json.Unmarshaler
-//
-// Done to prevent the standard reflection-based one
-// from using the implemention from the embedded style field
-func (s *NodeStyle) UnmarshalJSON(data []byte) error {
-	return canvas.UnmarshalColorStruct(data, s)
-}
-
-// Implement json.Unmarshaler
-//
-// Done to prevent the standard reflection-based one
-// from using the implemention from the embedded style field
-func (s *LinkStyle) UnmarshalJSON(data []byte) error {
-	return canvas.UnmarshalColorStruct(data, s)
-}
-
 func (s *LabelStyle) UnmarshalJSON(data []byte) error {
 	return canvas.UnmarshalColorStruct(data, s)
 }
