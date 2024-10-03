@@ -20,6 +20,12 @@ type Node struct {
 	LabelAt string     `json:"label_at,omitempty"`
 	Class   string     `json:"class,omitempty"`
 	Style   *NodeStyle `json:"style,omitempty"`
+	Extents *NodeExtents `json:"extents,omitempty"`
+}
+
+type NodeExtents struct {
+	Width int16 `json:"width"`
+	Height int16 `json:"height"`
 }
 
 // Link represents a link between two nodes.
@@ -191,4 +197,34 @@ func (t *Topology) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+func (n *Node) IsMultiCell() bool {
+	if n.Extents == nil {
+		return false
+	}
+	return n.Extents.Height > 1 || n.Extents.Width > 1
+}
+
+func (n *Node) GetExtents() (min, max vec.Vec2) {
+	p := vec.Vec2{
+		X: float32(n.Pos[0]),
+		Y: float32(n.Pos[1]),
+	}
+	if n.IsMultiCell() {
+		offset := vec.Vec2{ X: 0.5, Y: 0.5 }
+
+		minPos := p.Sub(offset)
+		minPos.X -= float32(n.Extents.Width/2)
+		minPos.Y -= float32(n.Extents.Height/2)
+
+		maxPos := minPos
+		maxPos.X += float32(n.Extents.Width)
+		maxPos.Y += float32(n.Extents.Height)
+
+		return minPos, maxPos
+	} else {
+		offset := vec.Vec2{ X: 0.5, Y: 0.5 }
+		return p.Sub(offset), p.Add(offset)
+	}
 }

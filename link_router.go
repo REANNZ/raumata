@@ -6,6 +6,7 @@ import (
 	"slices"
 
 	"github.com/REANNZ/raumata/internal"
+	"github.com/REANNZ/raumata/internal/f32"
 	"github.com/REANNZ/raumata/vec"
 )
 
@@ -25,6 +26,11 @@ const (
 type LinkRouter struct {
 	// Avoid other nodes when routing (default true)
 	AvoidNodes        bool
+	// Attach to multi-cell nodes in cardinal directions (default true)
+	AttachMultiCellsCardinal bool
+	// Encourage links to space themselves out (default true)
+	SpreadLinks       bool
+	Orthogonal        bool
 	topo              *Topology
 	nodes             internal.Grid[NodeId]
 	nodeLabels        internal.Grid[bool]
@@ -37,6 +43,8 @@ type LinkRouter struct {
 func NewLinkRouter(topo *Topology) *LinkRouter {
 	router := &LinkRouter{
 		AvoidNodes:        true,
+		AttachMultiCellsCardinal: true,
+		SpreadLinks:       true,
 		topo:              topo,
 		nodes:             internal.Grid[NodeId]{},
 		nodeLabels:        map[internal.GridPos]bool{},
@@ -46,14 +54,12 @@ func NewLinkRouter(topo *Topology) *LinkRouter {
 
 	setExtents := false
 	// Add all the nodes
-	for id, node := range topo.Nodes {
+	for _, node := range topo.Nodes {
 		if node != nil && node.Pos != nil {
 			pos := internal.GridPos{
 				X: node.Pos[0],
 				Y: node.Pos[1],
 			}
-
-			router.nodes[pos] = id
 
 			if !setExtents {
 				router.extentMin = pos
@@ -62,6 +68,41 @@ func NewLinkRouter(topo *Topology) *LinkRouter {
 			} else {
 				router.extentMin = router.extentMin.Min(pos)
 				router.extentMax = router.extentMax.Max(pos)
+			}
+
+			router.nodes[pos] = node.Id
+			if node.IsMultiCell() {
+				w := node.Extents.Width
+				h := node.Extents.Height
+
+				if w > 0 && h > 0 {
+					minVec, maxVec := node.GetExtents()
+
+					minX := int16(f32.Ceil(minVec.X))
+					minY := int16(f32.Ceil(minVec.Y))
+					maxX := int16(f32.Ceil(maxVec.X))
+					maxY := int16(f32.Ceil(maxVec.Y))
+
+					for x := minX; x < maxX; x++ {
+						for y := minY; y < maxY; y++ {
+							p := internal.GridPos{
+								X: x,
+								Y: y,
+							}
+
+							router.nodes[p] = node.Id
+						}
+					}
+
+					router.extentMin = router.extentMin.Min(internal.GridPos{
+						X: minX,
+						Y: minY,
+					})
+					router.extentMax = router.extentMax.Max(internal.GridPos{
+						X: maxX,
+						Y: maxY,
+					})
+				}
 			}
 
 			labelAt := pos
@@ -243,7 +284,9 @@ func (r *LinkRouter) RouteLinks() {
 	// over long ones, which works because short links
 	// tend to have less flexibility in possible routes
 	slices.SortStableFunc(newRoutes, func(a, b *route) int {
-		d := a.weight - b.weight
+		aWeightRatio := float32(a.path.Length()) / float32(a.weight)
+		bWeightRatio := float32(b.path.Length()) / float32(b.weight)
+		d := aWeightRatio - bWeightRatio
 		if d < 0 {
 			return -1
 		} else if d > 0 {
@@ -353,9 +396,22 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 		return nil
 	}
 
+	startNode := link.From
+	goalNode := link.To
+
+	if start.IsMultiCell() {
+		startNode, goalNode = goalNode, startNode
+		start, goal = goal, start
+	}
+
+	if start.IsMultiCell() && goal.IsMultiCell() {
+		panic("Routing links between two multi-cell nodes is not supported")
+	}
+
 	finder := routeFinder{
-		startNode: link.From,
-		goalNode:  link.To,
+		startNode: startNode,
+		goalNode:  goalNode,
+		goalIsMulti: goal.IsMultiCell(),
 		linkId:    id,
 		router:    r,
 	}
@@ -379,6 +435,7 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 		X: goal.Pos[0],
 		Y: goal.Pos[1],
 	}
+
 	return finder.run(startPos, goalPos, vias)
 }
 
@@ -409,6 +466,7 @@ func (r *route) dump() {
 type routeFinder struct {
 	startNode, goalNode NodeId
 	start, goal         gridNode
+	goalIsMulti         bool
 	vias                []internal.GridPos
 	linkId              LinkId
 	router              *LinkRouter
@@ -437,6 +495,7 @@ func (f *routeFinder) run(start, goal internal.GridPos, vias []internal.GridPos)
 	f.goal = gridNode{gridPos: goal, via: 0}
 	f.vias = vias
 
+
 	// Used to estimate the initial size of the datastructures used
 	// in path finding
 	minDist := int(start.ChebyshevDistance(goal))
@@ -457,11 +516,12 @@ func (f *routeFinder) run(start, goal internal.GridPos, vias []internal.GridPos)
 
 		curWeight := weights[current]
 
+		currentId, _ := f.router.nodes[current.gridPos]
 		// We've reached the destination. Due to the way the graph is defined,
 		// we have to ignore the direction values, which means there are up to
 		// 8 valid goal nodes (one for each approaching direction), fortunately
 		// the algorithm will find the closest one anyway.
-		if current.via == f.goal.via && current.gridPos == f.goal.gridPos {
+		if current.via == f.goal.via && (current.gridPos == f.goal.gridPos || currentId == f.goalNode) {
 			return f.buildRoute(current, curWeight)
 		}
 
@@ -478,7 +538,7 @@ func (f *routeFinder) run(start, goal internal.GridPos, vias []internal.GridPos)
 				// Adding the "via distance" causes the algorithm to favour exploring
 				// paths that have already been through a via point at the cost of
 				// potentially finding sub-optimal routes.
-				h := n.gridPos.ChebyshevDistance(f.goal.gridPos) + float32(n.via)
+				h := f.goalDistance(n) + float32(n.via)
 
 				// Multiply the priority by 100 to keep some of the precision from the
 				// weight calculation
@@ -570,8 +630,15 @@ func (f *routeFinder) neighbours(pos gridNode, fn func(gridNode)) {
 			g.via -= 1
 		}
 
-		if g.gridPos == f.goal.gridPos {
-			fn(g)
+		nodeId := f.router.nodes[g.gridPos]
+		if g.gridPos == f.goal.gridPos || nodeId == f.goalNode {
+			if f.goalIsMulti && f.router.AttachMultiCellsCardinal {
+				if g.dirX == 0 || g.dirY == 0 {
+					fn(g)
+				}
+			} else {
+				fn(g)
+			}
 		} else {
 			// Check that neighbour is in-bounds
 			gridPos := g.gridPos
@@ -607,9 +674,19 @@ func (f *routeFinder) neighbours(pos gridNode, fn func(gridNode)) {
 		// Handle the special case where dirX == 0 and dirY == 0
 		// Produce the 8 neighbours directly
 
+		// Produce cardinal directions first in order to
+		// create a slight preference for paths that leave the node
+		// in a cardinal direction.
+		// This produces better results when routing to multi-cell
+		// nodes.
 		for dx := int16(-1); dx <= 1; dx++ {
 			for dy := int16(-1); dy <= 1; dy++ {
+				// Skip null direction
 				if dx == 0 && dy == 0 {
+					continue
+				}
+				// Skip diagonal directions
+				if dx != 0 && dy != 0 {
 					continue
 				}
 				n := pos
@@ -620,33 +697,70 @@ func (f *routeFinder) neighbours(pos gridNode, fn func(gridNode)) {
 				produce(n)
 			}
 		}
+
+		if !f.router.Orthogonal {
+			// Now produce the diagonals
+			for dx := int16(-1); dx <= 1; dx++ {
+				for dy := int16(-1); dy <= 1; dy++ {
+					// Skip cardinal directions
+					// (also skips null direction)
+					if dx == 0 || dy == 0 {
+						continue
+					}
+					n := pos
+					n.dirX = dx
+					n.dirY = dy
+					n.gridPos.X = pos.gridPos.X + dx
+					n.gridPos.Y = pos.gridPos.Y + dy
+					produce(n)
+				}
+			}
+		}
 		return
 	}
 
-	// Produce the two 45deg turns from the current direction
+	if f.router.Orthogonal {
+		if pos.dirX == 0 {
+			n := pos
+			n.dirY = 0
+			n.dirX = pos.dirY
+			produce(n)
+			n.dirX = -pos.dirY
+			produce(n)
+		} else {
+			n := pos
+			n.dirX = 0
+			n.dirY = pos.dirX
+			produce(n)
+			n.dirY = -pos.dirX
+			produce(n)
+		}
+	} else {
+		// Produce the two 45deg turns from the current direction
 
-	if pos.dirX == 0 {
-		n := pos
-		n.dirX = 1
-		produce(n)
-		n.dirX = -1
-		produce(n)
-	} else if pos.dirY != 0 {
-		n := pos
-		n.dirX = 0
-		produce(n)
-	}
+		if pos.dirX == 0 {
+			n := pos
+			n.dirX = 1
+			produce(n)
+			n.dirX = -1
+			produce(n)
+		} else if pos.dirY != 0 {
+			n := pos
+			n.dirX = 0
+			produce(n)
+		}
 
-	if pos.dirY == 0 {
-		n := pos
-		n.dirY = 1
-		produce(n)
-		n.dirY = -1
-		produce(n)
-	} else if pos.dirX != 0 {
-		n := pos
-		n.dirY = 0
-		produce(n)
+		if pos.dirY == 0 {
+			n := pos
+			n.dirY = 1
+			produce(n)
+			n.dirY = -1
+			produce(n)
+		} else if pos.dirX != 0 {
+			n := pos
+			n.dirY = 0
+			produce(n)
+		}
 	}
 }
 
@@ -655,9 +769,11 @@ func (f *routeFinder) weight(fromNode, toNode gridNode) float32 {
 	from := fromNode.gridPos
 	to := toNode.gridPos
 
+	toNodeId := f.router.nodes[to]
+
 	// This currently always returns 1, but if JPS is implemented,
 	// the nodes won't be adjacent cells
-	var dist float32 = from.ChebyshevDistance(to)
+	dist := from.ChebyshevDistance(to)
 	var linkPenalty float32 = 0
 
 	// If the grid positions are the same, it's a turn
@@ -673,7 +789,7 @@ func (f *routeFinder) weight(fromNode, toNode gridNode) float32 {
 		if ok && prevNode.gridPos == cur.gridPos {
 			dist = 4
 		}
-	} else if to != f.goal.gridPos {
+	} else if to != f.goal.gridPos && toNodeId != f.goalNode {
 		// Add a penalty to cells that contain links, this is
 		// primarily to avoid having multiple paths take the
 		// same route when other optimal paths exist.
@@ -740,6 +856,9 @@ func (f *routeFinder) weight(fromNode, toNode gridNode) float32 {
 		// start and end nodes since otherwise they can bunch
 		// up weird ways.
 		addPenalty := func(at internal.GridPos) {
+			if !f.router.SpreadLinks {
+				return
+			}
 			links := f.router.linkMap[at]
 			// Start the penalty fairly low, since we really
 			// just want to pick between otherwise-equal paths
@@ -788,4 +907,40 @@ func (f *routeFinder) weight(fromNode, toNode gridNode) float32 {
 	weight := dist + (linkPenalty * f.router.linkPenaltyWeight)
 
 	return weight
+}
+
+func (f *routeFinder) goalDistance(fromNode gridNode) float32 {
+	from := fromNode.gridPos
+
+	if f.goalIsMulti {
+		goalNode := f.router.topo.GetNode(f.goalNode)
+
+		minVec, maxVec := goalNode.GetExtents()
+
+		minX := int16(f32.Ceil(minVec.X))
+		minY := int16(f32.Ceil(minVec.Y))
+		maxX := int16(f32.Ceil(maxVec.X))
+		maxY := int16(f32.Ceil(maxVec.Y))
+
+		dist := float32(-1)
+
+		for x := minX; x < maxX; x++ {
+			for y := minY; y < maxY; y++ {
+				pos := internal.GridPos{
+					X: x,
+					Y: y,
+				}
+
+				d := from.ChebyshevDistance(pos)
+
+				if dist < 0 || d < dist {
+					dist = d
+				}
+			}
+		}
+
+		return dist
+	} else {
+		return from.ChebyshevDistance(f.goal.gridPos)
+	}
 }

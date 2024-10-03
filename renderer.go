@@ -279,6 +279,17 @@ func (r *Renderer) RenderNode(node *Node) (canvas.Object, error) {
 	// NOTE: this is where you'd branch off for different node styles
 	var nodeShape canvas.Object = canvas.NewCircle(pos, style.Size/2)
 
+	if node.IsMultiCell() {
+		radius := style.Size / 2;
+		nodeMin, nodeMax := node.GetExtents()
+		nodeShape = r.RenderShape(radius, vec.Polyline{
+			{ X: nodeMin.X, Y: nodeMin.Y },
+			{ X: nodeMax.X, Y: nodeMin.Y },
+			{ X: nodeMax.X, Y: nodeMax.Y },
+			{ X: nodeMin.X, Y: nodeMax.Y },
+		})
+	}
+
 	attrs := nodeShape.GetAttributes()
 	attrs.AddClass("node")
 	if node.Class != "" {
@@ -599,6 +610,39 @@ func (r *Renderer) RenderShape(radius float32, paths ...vec.Polyline) canvas.Obj
 	}
 
 	return pathObj
+}
+
+func (r *Renderer) RenderGrid(bounds *canvas.AABB) canvas.Object {
+	gridGroup := canvas.NewGroup()
+	attrs := &gridGroup.Attributes
+	attrs.EnsureStyle()
+	attrs.Style.StrokeColor.SetColor(canvas.HSL(0, 0, 0.5))
+
+	scale := r.GetScale()
+
+	minPos, maxPos := bounds.Bounds()
+
+	minPos = minPos.Div(scale).Floor().Mul(scale)
+	maxPos = maxPos.Div(scale).Floor().Mul(scale)
+
+	minPos.X -= scale / 2
+	minPos.Y -= scale / 2
+
+	for x := minPos.X; x <= maxPos.X; x += scale {
+		start := vec.Vec2{ X: x, Y: minPos.Y }
+		end := vec.Vec2{ X: x, Y: maxPos.Y }
+		line := canvas.NewLine(start, end)
+		gridGroup.AppendChild(line)
+	}
+
+	for y := minPos.Y; y <= maxPos.Y; y += scale {
+		start := vec.Vec2{ X: minPos.X, Y: y }
+		end := vec.Vec2{ X: maxPos.X, Y: y }
+		line := canvas.NewLine(start, end)
+		gridGroup.AppendChild(line)
+	}
+
+	return gridGroup
 }
 
 func (r *Renderer) getLinkStyle(link *Link) *LinkStyle {

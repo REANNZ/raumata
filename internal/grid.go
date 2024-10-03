@@ -72,3 +72,22 @@ func (a GridPos) ChebyshevDistance(b GridPos) float32 {
 		return float32(dy)
 	}
 }
+
+
+// Returns the "Taxicab" distance between two points
+// aka L0 metric
+//
+//	d = abs(a.X-b.X) + abs(a.Y-b.Y)
+func (a GridPos) TaxicabDistance(b GridPos) float32 {
+	dx := a.X - b.X
+	dy := a.Y - b.Y
+
+	if dx < 0 {
+		dx *= -1
+	}
+	if dy < 0 {
+		dy *= -1
+	}
+
+	return float32(dx + dy)
+}
