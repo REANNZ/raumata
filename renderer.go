@@ -102,6 +102,7 @@ func DefaultRenderConfig() *RenderConfig {
 type Renderer struct {
 	Config *RenderConfig
 	scale  float32
+	nodeSizes map[NodeId]float32
 }
 
 func NewRenderer() *Renderer {
@@ -169,6 +170,8 @@ func (r *Renderer) RenderTopology(topo *Topology) (canvas.Object, error) {
 	links := make([]*Link, 0, len(topo.Links))
 	nodes := make([]*Node, 0, len(topo.Nodes))
 
+	r.nodeSizes = map[NodeId]float32{}
+
 	// Collect and sort the links and nodes, this keeps the output
 	// consistent between runs
 	for _, l := range topo.Links {
@@ -181,6 +184,8 @@ func (r *Renderer) RenderTopology(topo *Topology) (canvas.Object, error) {
 		// Filter out nodes without a position
 		if n != nil && n.Pos != nil {
 			nodes = append(nodes, n)
+			style := r.getNodeStyle(n)
+			r.nodeSizes[n.Id] = style.Size
 		}
 	}
 
@@ -326,6 +331,7 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 	route := link.Route.Simplify()
 
 	style := r.getLinkStyle(link)
+	scale := r.GetScale()
 
 	linkGroup := canvas.NewGroup()
 	linkGroup.Attributes.Id = string("L-" + link.Id)
@@ -334,25 +340,43 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 		linkGroup.Attributes.AddClass(link.Class)
 	}
 
+	// The node sizes are used to adjust lengths along links
+	fromSize := r.getNodeSize(link.From)
+	toSize := r.getNodeSize(link.To)
+
 	// NOTE: This is where you'd branch off for different link styles
 	//       (e.g. double line instead of opposing arrows)
-	var splitAt float32 = 0.5
+
+	var splitAt float32
 	if link.SplitAt != nil {
 		splitAt = *link.SplitAt
+	} else if fromSize == toSize {
+		// Optimisation for common case
+		splitAt = 0.5
+	} else {
+		// Calculate the split point halfway along the visual length of the
+		// link.
+		routeLen := route.Length()
+		// Scale the to/from sizes to grid space
+		fromSizeGrid := fromSize / scale
+		toSizeGrid := toSize / scale
+
+		// This calculates a split point that has been moved further along
+		// the path proportional to fromSize and pulled back along the path
+		// proportional to toSize
+		splitAt = 1 + (fromSizeGrid - toSizeGrid) / routeLen
+		splitAt = splitAt / 2
 	}
 
-	scale := r.GetScale()
+	// Clamp splitAt to 0 < x < 1
+	splitAt = f32.Max(f32.Min(splitAt, 0.99), 0.01)
+
 	splitTolerance := style.Size / scale
 	routeA, routeB := findSplit(route, splitAt, splitTolerance)
 	routeA = routeA.Mul(scale)
 	routeB = routeB.Mul(scale)
 
 	// TODO: handle state-dependent link-coloring (e.g. grey for down)
-
-	// How much the link length is reduced by being hidden under a node, or
-	// formed into a point. This is an approximation to ensure the label
-	// is visually centered
-	linkLengthReduction := r.Config.DefaultNodeStyle.Size - style.Size
 
 	// Helper function for rendering the individual link parts
 	renderLinkSegment := func(route vec.Polyline, data *LinkData, from, to string) (canvas.Object, error) {
@@ -378,8 +402,12 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 		linkSeg.AppendChild(path)
 
 		if data != nil && data.Label != "" {
+			// Calculate the adjustment to the centre point
+			// due to the node and the arrow head
+			adjustment := r.getNodeSize(NodeId(from))
+			adjustment -= style.Size
 			// Calculate the offset 0.5 along the path as seen
-			t := 1 + (linkLengthReduction / (routeA.Length()))
+			t := 1 + (adjustment / (route.Length()))
 			t = t / 2
 			labelPos := route.Interpolate(t)
 			label, err := r.RenderLinkLabel(labelPos, data.Label)
@@ -687,6 +715,18 @@ func (r *Renderer) getNodeStyle(node *Node) *NodeStyle {
 	return style
 }
 
+func (r *Renderer) getNodeSize(nodeId NodeId) float32 {
+	if r.nodeSizes == nil {
+		return r.Config.DefaultNodeStyle.Size
+	}
+	size, ok := r.nodeSizes[nodeId]
+	if !ok {
+		return r.Config.DefaultNodeStyle.Size
+	}
+
+	return size
+}
+
 func (s *NodeStyle) merge(other *NodeStyle) {
 	if s.Style == nil {
 		s.Style = canvas.NewStyle()
@@ -698,10 +738,10 @@ func (s *NodeStyle) merge(other *NodeStyle) {
 }
 
 func (s *LinkStyle) merge(other *LinkStyle) {
-	s.Style.Merge(other.Style)
 	if s.Style == nil {
 		s.Style = canvas.NewStyle()
 	}
+	s.Style.Merge(other.Style)
 	if s.Size == 0 {
 		s.Size = other.Size
 	}
