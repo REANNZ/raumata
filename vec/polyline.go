@@ -123,6 +123,18 @@ func (pl Polyline) Simplify() Polyline {
 	return append(newLine, pl[len(pl)-1])
 }
 
+// Reverse returns a new Polyline with the points reversed
+func (pl Polyline) Reverse() Polyline {
+	l := len(pl)
+	newLine := make([]Vec2, l)
+
+	for i := 0; i < l; i++ {
+		newLine[i] = pl[l-(i+1)]
+	}
+
+	return newLine
+}
+
 // Subdivide returns a polyline with each segment divided into
 // count parts
 func (pl Polyline) Subdivide(count int) Polyline {

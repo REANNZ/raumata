@@ -398,10 +398,12 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 
 	startNode := link.From
 	goalNode := link.To
+	swapped := false
 
 	if start.IsMultiCell() {
 		startNode, goalNode = goalNode, startNode
 		start, goal = goal, start
+		swapped = true
 	}
 
 	if start.IsMultiCell() && goal.IsMultiCell() {
@@ -436,7 +438,11 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 		Y: goal.Pos[1],
 	}
 
-	return finder.run(startPos, goalPos, vias)
+	route := finder.run(startPos, goalPos, vias)
+	if swapped {
+		route.path = route.path.Reverse()
+	}
+	return route
 }
 
 type route struct {
