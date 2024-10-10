@@ -306,8 +306,9 @@ func (r *Renderer) RenderNode(node *Node) (canvas.Object, error) {
 		attrs.Style = node.Style.Style
 	}
 
-	// Don't render node labels if we don't know where to put them
-	if node.LabelAt != "" {
+	nodeGroup.AppendChild(nodeShape)
+
+	if node.IsMultiCell() || node.LabelAt != "" {
 		label, err := r.RenderNodeLabel(node)
 		if err != nil {
 			return nil, err
@@ -316,8 +317,6 @@ func (r *Renderer) RenderNode(node *Node) (canvas.Object, error) {
 			nodeGroup.AppendChild(label)
 		}
 	}
-
-	nodeGroup.AppendChild(nodeShape)
 
 	return nodeGroup, nil
 }
@@ -449,6 +448,10 @@ func (r *Renderer) RenderNodeLabel(node *Node) (canvas.Object, error) {
 	style := r.getNodeStyle(node)
 
 	pos := vec.Vec2{X: float32(node.Pos[0]), Y: float32(node.Pos[1])}
+	if node.IsMultiCell() {
+		minPos, maxPos := node.GetExtents()
+		pos = minPos.Add(maxPos).Div(2)
+	}
 	labelPos := pos.Mul(scale)
 	anchor := canvas.TextAnchorNone
 	offsetDist := (style.Size / 2) + style.StrokeWidth.Value
@@ -495,6 +498,12 @@ func (r *Renderer) RenderNodeLabel(node *Node) (canvas.Object, error) {
 	case "nw":
 		offsetVec = offsetVec.Rotate(math.Pi + diagAngle)
 		anchor = canvas.TextAnchorEnd
+	case "c":
+		if node.IsMultiCell() {
+			offsetVec = vec.Vec2{}
+			anchor = canvas.TextAnchorMiddle
+			textAdjust.Y = textSize / 2
+		}
 	}
 
 	if anchor != canvas.TextAnchorNone {
