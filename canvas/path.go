@@ -103,6 +103,12 @@ func (p *Path) RoundCorner(radius float32, start, peak, end vec.Vec2) *Path {
 	dist1 := dir1.Length()
 	dist2 := dir2.Length()
 
+	// Handle start == peak or end == peak
+	// start == end is handled by LineTo itself
+	if dist1 < 1e-8 || dist2 < 1e-8 {
+		return p.LineTo(start).LineTo(end)
+	}
+
 	dir1 = dir1.Div(dist1)
 	dir2 = dir2.Div(dist2)
 
