@@ -439,6 +439,9 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 	}
 
 	route := finder.run(startPos, goalPos, vias)
+	if route == nil {
+		return nil
+	}
 	if swapped {
 		route.path = route.path.Reverse()
 	}
