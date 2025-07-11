@@ -73,7 +73,6 @@ func (a GridPos) ChebyshevDistance(b GridPos) float32 {
 	}
 }
 
-
 // Returns the "Taxicab" distance between two points
 // aka L0 metric
 //

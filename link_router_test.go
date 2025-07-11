@@ -114,7 +114,7 @@ func TestLinkRouterMulti(t *testing.T) {
 				Label:   "A",
 				LabelAt: "c",
 				Extents: &NodeExtents{
-					Width: 3,
+					Width:  3,
 					Height: 10,
 				},
 			},
@@ -124,7 +124,7 @@ func TestLinkRouterMulti(t *testing.T) {
 				Label:   "B",
 				LabelAt: "c",
 				Extents: &NodeExtents{
-					Width: 3,
+					Width:  3,
 					Height: 10,
 				},
 			},

@@ -25,7 +25,7 @@ const (
 // The zero value is not usable.
 type LinkRouter struct {
 	// Avoid other nodes when routing (default true)
-	AvoidNodes        bool
+	AvoidNodes bool
 	// Attach to multi-cell nodes in cardinal directions (default true)
 	AttachMultiCellsCardinal bool
 	// Encourage links to space themselves out (default true)
@@ -42,14 +42,14 @@ type LinkRouter struct {
 
 func NewLinkRouter(topo *Topology) *LinkRouter {
 	router := &LinkRouter{
-		AvoidNodes:        true,
+		AvoidNodes:               true,
 		AttachMultiCellsCardinal: true,
-		SpreadLinks:       true,
-		topo:              topo,
-		nodes:             internal.Grid[NodeId]{},
-		nodeLabels:        map[internal.GridPos]bool{},
-		linkMap:           map[internal.GridPos][]LinkId{},
-		linkPenaltyWeight: linkPenaltyWeight,
+		SpreadLinks:              true,
+		topo:                     topo,
+		nodes:                    internal.Grid[NodeId]{},
+		nodeLabels:               map[internal.GridPos]bool{},
+		linkMap:                  map[internal.GridPos][]LinkId{},
+		linkPenaltyWeight:        linkPenaltyWeight,
 	}
 
 	setExtents := false
@@ -400,11 +400,11 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 	goalNode := link.To
 
 	finder := routeFinder{
-		startNode: startNode,
-		goalNode:  goalNode,
+		startNode:   startNode,
+		goalNode:    goalNode,
 		goalIsMulti: goal.IsMultiCell(),
-		linkId:    id,
-		router:    r,
+		linkId:      id,
+		router:      r,
 	}
 
 	vias := make([]internal.GridPos, len(link.Via))
@@ -542,7 +542,7 @@ func (f *routeFinder) run(startPositions []internal.GridPos, goal internal.GridP
 	for _, pos := range startPositions {
 		node := gridNode{
 			gridPos: pos,
-			via: len(vias),
+			via:     len(vias),
 		}
 
 		openSet.Push(node, 0)

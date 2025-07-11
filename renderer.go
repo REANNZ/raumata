@@ -100,8 +100,8 @@ func DefaultRenderConfig() *RenderConfig {
 }
 
 type Renderer struct {
-	Config *RenderConfig
-	scale  float32
+	Config    *RenderConfig
+	scale     float32
 	nodeSizes map[NodeId]float32
 }
 
@@ -285,13 +285,13 @@ func (r *Renderer) RenderNode(node *Node) (canvas.Object, error) {
 	var nodeShape canvas.Object = canvas.NewCircle(pos, style.Size/2)
 
 	if node.IsMultiCell() {
-		radius := style.Size / 2;
+		radius := style.Size / 2
 		nodeMin, nodeMax := node.GetExtents()
 		nodeShape = r.RenderShape(radius, vec.Polyline{
-			{ X: nodeMin.X, Y: nodeMin.Y },
-			{ X: nodeMax.X, Y: nodeMin.Y },
-			{ X: nodeMax.X, Y: nodeMax.Y },
-			{ X: nodeMin.X, Y: nodeMax.Y },
+			{X: nodeMin.X, Y: nodeMin.Y},
+			{X: nodeMax.X, Y: nodeMin.Y},
+			{X: nodeMax.X, Y: nodeMax.Y},
+			{X: nodeMin.X, Y: nodeMax.Y},
 		})
 	}
 
@@ -363,7 +363,7 @@ func (r *Renderer) RenderLink(link *Link) (canvas.Object, error) {
 		// This calculates a split point that has been moved further along
 		// the path proportional to fromSize and pulled back along the path
 		// proportional to toSize
-		splitAt = 1 + (fromSizeGrid - toSizeGrid) / routeLen
+		splitAt = 1 + (fromSizeGrid-toSizeGrid)/routeLen
 		splitAt = splitAt / 2
 	}
 
@@ -666,15 +666,15 @@ func (r *Renderer) RenderGrid(bounds *canvas.AABB) canvas.Object {
 	minPos.Y -= scale / 2
 
 	for x := minPos.X; x <= maxPos.X; x += scale {
-		start := vec.Vec2{ X: x, Y: minPos.Y }
-		end := vec.Vec2{ X: x, Y: maxPos.Y }
+		start := vec.Vec2{X: x, Y: minPos.Y}
+		end := vec.Vec2{X: x, Y: maxPos.Y}
 		line := canvas.NewLine(start, end)
 		gridGroup.AppendChild(line)
 	}
 
 	for y := minPos.Y; y <= maxPos.Y; y += scale {
-		start := vec.Vec2{ X: minPos.X, Y: y }
-		end := vec.Vec2{ X: maxPos.X, Y: y }
+		start := vec.Vec2{X: minPos.X, Y: y}
+		end := vec.Vec2{X: maxPos.X, Y: y}
 		line := canvas.NewLine(start, end)
 		gridGroup.AppendChild(line)
 	}
