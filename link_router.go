@@ -398,17 +398,6 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 
 	startNode := link.From
 	goalNode := link.To
-	swapped := false
-
-	if start.IsMultiCell() {
-		startNode, goalNode = goalNode, startNode
-		start, goal = goal, start
-		swapped = true
-	}
-
-	if start.IsMultiCell() && goal.IsMultiCell() {
-		panic("Routing links between two multi-cell nodes is not supported")
-	}
 
 	finder := routeFinder{
 		startNode: startNode,
@@ -428,9 +417,44 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 
 	}
 
-	startPos := internal.GridPos{
-		X: start.Pos[0],
-		Y: start.Pos[1],
+	// Use a set of start positions instead of a single
+	// position to allow for multi-cell to multi-cell links
+	startPositions := make([]internal.GridPos, 0, 1)
+	if start.IsMultiCell() {
+		node := r.topo.GetNode(startNode)
+		minExtent, maxExtent := node.GetExtents()
+
+		minX := int16(f32.Ceil(minExtent.X))
+		minY := int16(f32.Ceil(minExtent.Y))
+		maxX := int16(f32.Ceil(maxExtent.X))
+		maxY := int16(f32.Ceil(maxExtent.Y))
+
+		for x := minX; x < maxX; x += 1 {
+			pos := internal.GridPos{
+				X: x,
+				Y: minY,
+			}
+			startPositions = append(startPositions, pos)
+
+			pos.Y = maxY - 1
+			startPositions = append(startPositions, pos)
+		}
+
+		for y := minY + 1; y < maxY; y += 1 {
+			pos := internal.GridPos{
+				X: minX,
+				Y: y,
+			}
+			startPositions = append(startPositions, pos)
+
+			pos.X = maxX - 1
+			startPositions = append(startPositions, pos)
+		}
+	} else {
+		startPositions = append(startPositions, internal.GridPos{
+			X: start.Pos[0],
+			Y: start.Pos[1],
+		})
 	}
 
 	goalPos := internal.GridPos{
@@ -438,13 +462,7 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 		Y: goal.Pos[1],
 	}
 
-	route := finder.run(startPos, goalPos, vias)
-	if route == nil {
-		return nil
-	}
-	if swapped {
-		route.path = route.path.Reverse()
-	}
+	route := finder.run(startPositions, goalPos, vias)
 	return route
 }
 
@@ -474,7 +492,7 @@ func (r *route) dump() {
 
 type routeFinder struct {
 	startNode, goalNode NodeId
-	start, goal         gridNode
+	goal                gridNode
 	goalIsMulti         bool
 	vias                []internal.GridPos
 	linkId              LinkId
@@ -499,11 +517,15 @@ type gridNode struct {
 // via position. The start node is then placed on the highest grid and
 // the goal node placed on the lowest grid, forcing the path to traverse
 // the via points by construction.
-func (f *routeFinder) run(start, goal internal.GridPos, vias []internal.GridPos) *route {
-	f.start = gridNode{gridPos: start, via: len(vias)}
+func (f *routeFinder) run(startPositions []internal.GridPos, goal internal.GridPos, vias []internal.GridPos) *route {
 	f.goal = gridNode{gridPos: goal, via: 0}
 	f.vias = vias
 
+	if len(startPositions) == 0 {
+		return nil
+	}
+
+	start := startPositions[0]
 
 	// Used to estimate the initial size of the datastructures used
 	// in path finding
@@ -514,8 +536,18 @@ func (f *routeFinder) run(start, goal internal.GridPos, vias []internal.GridPos)
 	openSet := internal.PriorityQueue[gridNode]{}
 	weights := make(map[gridNode]float32, minDist*2)
 
-	openSet.Push(f.start, 0)
-	weights[f.start] = 0
+	// Add all the start nodes to the initial open set
+	// This has a similar effect to starting with a virtual node
+	// that has the start positions as zero-distance neighbours
+	for _, pos := range startPositions {
+		node := gridNode{
+			gridPos: pos,
+			via: len(vias),
+		}
+
+		openSet.Push(node, 0)
+		weights[node] = 0
+	}
 
 	iterNum := 0
 	for !openSet.Empty() && iterNum < searchLimit {

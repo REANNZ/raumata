@@ -105,6 +105,74 @@ func TestLinkRouter1(t *testing.T) {
 	}
 }
 
+func TestLinkRouterMulti(t *testing.T) {
+	topo := Topology{
+		Nodes: map[NodeId]*Node{
+			"A": {
+				Id:      "A",
+				Pos:     &[2]int16{0, 0},
+				Label:   "A",
+				LabelAt: "c",
+				Extents: &NodeExtents{
+					Width: 3,
+					Height: 10,
+				},
+			},
+			"B": {
+				Id:      "B",
+				Pos:     &[2]int16{0, 10},
+				Label:   "B",
+				LabelAt: "c",
+				Extents: &NodeExtents{
+					Width: 3,
+					Height: 10,
+				},
+			},
+		},
+		Links: map[LinkId]*Link{
+			"A-B-1": {
+				Id:   "A-B-1",
+				From: "A",
+				To:   "B",
+			},
+			"A-B-2": {
+				Id:   "A-B-2",
+				From: "A",
+				To:   "B",
+			},
+			"A-B-3": {
+				Id:   "A-B-3",
+				From: "A",
+				To:   "B",
+			},
+			"A-B-4": {
+				Id:   "A-B-4",
+				From: "A",
+				To:   "B",
+			},
+			"A-B-5": {
+				Id:   "A-B-5",
+				From: "A",
+				To:   "B",
+			},
+		},
+	}
+
+	linkRouter := NewLinkRouter(&topo)
+
+	linkRouter.RouteLinks()
+
+	// Just check some simple properties
+	for id, link := range topo.Links {
+		if len(link.Route) == 0 {
+			t.Errorf("No route for link %s", id)
+		}
+		if len(link.Route) == 1 {
+			t.Errorf("Route for link %s only has one position", id)
+		}
+	}
+}
+
 func BenchmarkLinkRouter(b *testing.B) {
 	topo := Topology{
 		Nodes: map[NodeId]*Node{
