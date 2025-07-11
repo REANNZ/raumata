@@ -41,7 +41,11 @@ The format of that JSON file is:
       "label":    string,
       "label_at": string,
       "class":    string,
-      "style":    NodeStyle
+      "style":    NodeStyle,
+      "extents":  {
+         "width":  int,
+         "height": int
+      }
     }
 
 | Field    | Description |
@@ -49,9 +53,10 @@ The format of that JSON file is:
 | id       | A unique id for the node. Required if `Nodes` is an array. |
 | pos      | The position of the node in the layout grid. Required. |
 | label    | The label for the node. Optional, if omitted the id is used instead. |
-| label_at | The position of the label relative to the node. Values are `"n", "e", "s", "w", "ne", "se", "nw", "sw"`. Optional. |
+| label_at | The position of the label relative to the node. Values are `"c", "n", "e", "s", "w", "ne", "se", "nw", "sw"`. Optional. |
 | class    | A class to assign to the node. Optional. |
 | style    | Node-specific styles. Optional. |
+| extents  | Specify the size of a rectangular node. The node will be centered at `pos`. Optional. |
 
 ## Link
 
