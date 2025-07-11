@@ -400,11 +400,12 @@ func (r *LinkRouter) routeLink(id LinkId) *route {
 	goalNode := link.To
 
 	finder := routeFinder{
-		startNode:   startNode,
-		goalNode:    goalNode,
-		goalIsMulti: goal.IsMultiCell(),
-		linkId:      id,
-		router:      r,
+		startNode:    startNode,
+		goalNode:     goalNode,
+		startIsMulti: start.IsMultiCell(),
+		goalIsMulti:  goal.IsMultiCell(),
+		linkId:       id,
+		router:       r,
 	}
 
 	vias := make([]internal.GridPos, len(link.Via))
@@ -493,6 +494,7 @@ func (r *route) dump() {
 type routeFinder struct {
 	startNode, goalNode NodeId
 	goal                gridNode
+	startIsMulti        bool
 	goalIsMulti         bool
 	vias                []internal.GridPos
 	linkId              LinkId
@@ -739,7 +741,9 @@ func (f *routeFinder) neighbours(pos gridNode, fn func(gridNode)) {
 			}
 		}
 
-		if !f.router.Orthogonal {
+		multiOrthogonal := f.startIsMulti && f.router.AttachMultiCellsCardinal
+
+		if !f.router.Orthogonal && !multiOrthogonal {
 			// Now produce the diagonals
 			for dx := int16(-1); dx <= 1; dx++ {
 				for dy := int16(-1); dy <= 1; dy++ {
