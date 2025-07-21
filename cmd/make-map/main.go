@@ -9,10 +9,12 @@ The flags are:
 
 		-c path
 		    Read config from the JSON-formatted file at path.
-	    -dumpconf
+		-dumpconf
 		    Dump the config as JSON to stdout and exit.
 		-h, -help
 		    Print out full help
+		-no-spread-links
+		    Don't spread links out when routing
 
 If the input arg is not set, then the topology is read from standard input.
 If the output arg is not set, then the output is written to standard output.
@@ -32,9 +34,10 @@ import (
 )
 
 var (
-	configPath string = ""
-	help       bool   = false
-	dumpConf   bool   = false
+	configPath    string = ""
+	help          bool   = false
+	dumpConf      bool   = false
+	noSpreadLinks bool   = false
 )
 
 func init() {
@@ -42,6 +45,7 @@ func init() {
 	flag.BoolVar(&help, "h", false, "")
 	flag.BoolVar(&help, "help", false, "")
 	flag.BoolVar(&dumpConf, "dumpconf", false, "")
+	flag.BoolVar(&noSpreadLinks, "no-spread-links", false, "")
 }
 
 func main() {
@@ -128,6 +132,7 @@ func run() int {
 	}
 
 	linkRouter := raumata.NewLinkRouter(&topo)
+	linkRouter.SpreadLinks = !noSpreadLinks
 	min, max := linkRouter.GetExtents()
 	linkRouter.SetExtents(int(min.X-1), int(min.Y-1), int(max.X+1), int(max.Y+1))
 	linkRouter.RouteLinks()
@@ -179,6 +184,8 @@ The flags are:
           Dump the config as JSON to stdout and exit.
     -h, -help
         Print out full help
+    -no-spread-links
+        Don't spread links out when routing
 
 If input isn't set, or has the value '-', the topology is read
 from standard input.
